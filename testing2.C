@@ -29,7 +29,7 @@ float d_pmt_x[64];
 float d_pmt_y[64];
 float d_pmt_z = -1443.5; // same for all tubes
 
-
+bool DIAG = false;
 
 using namespace std;
 
@@ -71,6 +71,88 @@ void flatten(int runnumber, int passnumber)
   cout << "run number = " << runnumber << " pass number = " << passnumber << endl;
 
 
+  int bbcs_index      =  0;
+
+
+  char calibfile[500];
+  sprintf(calibfile, "output/flattening_data/flattening_%d_%d.dat", runnumber, passnumber - 1);
+  cout << "calib text output file: " << calibfile << endl;
+
+  // --- lots of comments needed here
+  // flattening parameters read in from file
+  float    mean[NMUL][NZPS][NHAR][NDETSHORT][2]; // mean of qx, qy (? double check)
+  float    widt[NMUL][NZPS][NHAR][NDETSHORT][2]; // width of qx, qy (?? double check)
+  float    four[NMUL][NZPS][NHAR][NDETSHORT][2][NORD]; // fourier components for flattening
+
+  //Initializing the calibration parameters to be read in from the file
+  for ( int ic = 0; ic < NMUL; ic ++ )
+    {
+      for ( int iz = 0; iz < NZPS; iz++ )
+        {
+          for ( int ih = 1; ih < NHAR; ih++ )
+            {
+              for ( int id = 0; id < NDETSHORT; id++ )
+                {
+                  for ( int ib = 0; ib < 2; ib++ )
+                    {
+                      // --- mean (of q-vectors)
+                      mean[ic][iz][ih][id][ib] = 0.0;
+
+                      // --- width (of q-vectors)
+                      widt[ic][iz][ih][id][ib] = 1.0;
+
+                      // --- fourier components for flattening
+                      for ( int io = 0; io < NORD; io++ )
+                        {
+                          four[ic][iz][ih][id][ib][io] = 0.0;
+                        } // orders
+                    } // x and y
+                } // detector
+            } // harmonics
+        } // z_vertex bins
+    } // centrality bins
+
+  // --- dont read in for first pass
+  if ( passnumber >= 2 )
+    {
+      cout << "reading calibration file : " << calibfile << endl;
+      float f0, f1, f2, f3; //f4,f5,f6,f7;
+      ifstream ifs;
+      ifs.open(calibfile);
+      for ( int ic = 0; ic < NMUL; ic++ )
+        {
+          for ( int iz = 0; iz < NZPS; iz++ )
+            {
+              for ( int ih = 1; ih < NHAR; ih++ )
+                {
+                  for ( int id = 0; id < NDETSHORT; id++ )
+                    {
+                      ifs >> f0 >> f1 >> f2 >> f3;
+                      if ( f1 <= 0.0 ) f1 = 1.0;
+                      if ( f3 <= 0.0 ) f3 = 1.0;
+                      mean[ic][iz][ih][id][0] = f0;
+                      widt[ic][iz][ih][id][0] = f1;
+                      mean[ic][iz][ih][id][1] = f2;
+                      widt[ic][iz][ih][id][1] = f3;
+                      if ( id == 2 && ih == 1 && DIAG ) cout << f0 << " " << f1 << " " << f2 << " " << f3 << endl; //bbc psi 2 parameters
+                      if ( id == 2 && ih == 1 && DIAG ) cout << "---" << endl;
+                      if ( id == 3 && ih == 1 && DIAG ) cout << f0 << " " << f1 << " " << f2 << " " << f3 << endl; //bbc psi 2 parameters
+                      for ( int ib = 0; ib < 2; ib++ )
+                        {
+                          for ( int io = 0; io < NORD; io++ )
+                            {
+                              ifs >> four[ic][iz][ih][id][ib][io];
+                            } // orders
+                        } // x and y
+                    } // detectors
+                } // harmonics
+            } // z_vertex bins
+        } // centrality bins
+      ifs.close();
+    } // check on second or third pass
+
+
+
 
   char outfile1[300];
   //sprintf(outfile1, "%s%s%d%s%d%s", "output/files_", species.Data(), energyflag, "/hist_", runNumber, ".root");
@@ -79,6 +161,60 @@ void flatten(int runnumber, int passnumber)
 
   TFile *mData1 = TFile::Open(outfile1, "recreate");
   mData1->cd();
+
+  // --- flattening parameters output to file
+  TProfile *ave[NMUL][NZPS][NHAR][NDETSHORT]; // average Psi
+  TProfile *flt[NMUL][NZPS][NHAR][NDETSHORT]; // flattening parameters
+
+  TH2D     *psi_bf[NMUL][NHAR][NDETSHORT];
+  TH2D     *psi_mf[NMUL][NHAR][NDETSHORT];
+  TH2D     *psi_af[NMUL][NHAR][NDETSHORT];
+
+  // --- profile histograms for average of Psi and flattening parameters
+  char name[200];
+  for ( int ic = 0; ic < NMUL; ic ++ )
+    {
+      for ( int iz = 0; iz < NZPS; iz++ )
+        {
+          for ( int ih = 1; ih < NHAR; ih++ )
+            {
+              for ( int id = 0; id < NDETSHORT; id++ )
+                {
+                  // --- average (of?)
+                  sprintf(name, "ave_%d_%d_%d_%d", ic, iz, ih, id);
+                  ave[ic][iz][ih][id] = new TProfile(name, name, 4, -0.5, 3.5, -10.1, 10.1, "S"); //for SMD -1.1,1.1
+                  // --- flattening parameter (?)
+                  sprintf(name, "flt_%d_%d_%d_%d", ic, iz, ih, id);
+                  flt[ic][iz][ih][id] = new TProfile(name, name, 4 * NORD, -0.5, NORD * 4.0 - 0.5, -1.1, 1.1);
+                } // loop over NDETSHORTectors
+            } // loop over harmonics
+        } // loop over z_vertex bins
+    } // loop over centrality bins
+
+  // --- TH2D histograms for Q vector components
+  for ( int ic = 0; ic < NMUL; ic++ )
+    {
+      for ( int ih = 1; ih < NHAR; ih++)
+        {
+          for ( int id = 0; id < NDETSHORT; id++)
+            {
+              // --- psi_bf (event plane before recentering and flattening)
+              sprintf(name, "psi_bf_%d_%d_%d", ic, ih, id);
+              psi_bf[ic][ih][id] = new TH2D(name, name, NZPS * 3, -0.5, NZPS * 3.0 - 0.5, 220, -4.1, 4.1);
+
+              // --- psi_mf (event plane after recentering but before flattening)
+              sprintf(name, "psi_mf_%d_%d_%d", ic, ih, id);
+              psi_mf[ic][ih][id] = new TH2D(name, name, NZPS * 3, -0.5, NZPS * 3.0 - 0.5, 220, -4.1, 4.1);
+
+              // --- psi_af (event plane after recentering and flattening)
+              sprintf(name, "psi_af_%d_%d_%d", ic, ih, id);
+              psi_af[ic][ih][id] = new TH2D(name, name, NZPS * 3, -0.5, NZPS * 3.0 - 0.5, 220, -4.1, 4.1);
+            } // loop over detectors
+        } // loop over harmonics
+    } // loop over centrality bins
+
+
+
 
   TH1D* heta = new TH1D("heta","",32,-3.2,3.2);
   TH1D* heta_cnt = new TH1D("heta_cnt","",32,-3.2,3.2);
@@ -156,6 +292,27 @@ void flatten(int runnumber, int passnumber)
             }
           bbc_qw += bbc_charge;
         } // end loop over tubes
+
+      // --- the array that has all of the Q vectors
+      float sumxy[NHAR][NDETSHORT][4];
+      for (int i = 0; i < NHAR; i++)
+        {
+          for (int j = 0; j < NDETSHORT; j++)
+            {
+              for (int k = 0; k < 4; k++) //qx qy qw psi
+                {
+                  sumxy[i][j][k] = 0; // initialize to 0
+                } // x,y,w,psi
+            } // detectors
+        } // harmonics
+      // --- set values to BBC values from above
+      for (int ih = 1; ih < NHAR; ih++)
+        {
+          sumxy[ih][bbcs_index][0] = bbc_qxn[ih];
+          sumxy[ih][bbcs_index][1] = bbc_qyn[ih];
+          sumxy[ih][bbcs_index][2] = bbc_qw;
+        }
+
 
       // --- do a loop over fvtx tracks
       int nfvtxt = ktree->ntracklets;
