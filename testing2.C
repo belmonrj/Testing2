@@ -215,6 +215,20 @@ void flatten(int runnumber, int passnumber)
 
 
 
+  // --- analysis histograms
+
+  TProfile* bbcs_vneta_both_docalib[NHAR][NMUL][NZPS];
+  for ( int ih = 1; ih < NHAR; ++ih )
+    {
+      for ( int ic = 0; ic < NMUL; ++ic )
+        {
+          for ( int iz = 0; iz < NZPS; ++iz )
+            {
+              int n = ih + 1; // harmonic number
+              bbcs_vneta_both_docalib[ih][ic][iz] = new TProfile(Form("bbcs_v%ieta_both_docalib_cent%d_zvtx%d", n, ic, iz), "", 32, -3.2, 3.2, -1.1, 1.1);
+            } // iz
+        } // ic
+    } // ih
 
   TH1D* heta = new TH1D("heta","",32,-3.2,3.2);
   TH1D* heta_cnt = new TH1D("heta_cnt","",32,-3.2,3.2);
@@ -462,6 +476,16 @@ void flatten(int runnumber, int passnumber)
           float dcay = ktree->fDCA_Y[i];
           heta->Fill(eta);
           heta_fvtx->Fill(eta);
+          for ( int ih = 1; ih < NHAR; ++ih )
+            {
+              int n = ih + 1;
+              if (-4.0 < bbcs_psin_docalib[ih] && bbcs_psin_docalib[ih] < 4.0)
+                {
+                  double bbc_dphi = phi - bbcs_psin_docalib[ih];
+                  double cosbbc_dphi = cos(n * bbc_dphi);
+                  bbcs_vneta_both_docalib[ih][icent][izvtx]->Fill(eta, cosbbc_dphi);
+                }
+            }
         } // end loop over fvtx tracks
 
       // --- do a loop over central arm tracks
@@ -482,6 +506,17 @@ void flatten(int runnumber, int passnumber)
 
           heta->Fill(eta);
           heta_cnt->Fill(eta);
+
+          for ( int ih = 1; ih < NHAR; ++ih )
+            {
+              int n = ih + 1;
+              if (-4.0 < bbcs_psin_docalib[ih] && bbcs_psin_docalib[ih] < 4.0)
+                {
+                  double bbc_dphi = phi - bbcs_psin_docalib[ih];
+                  double cosbbc_dphi = cos(n * bbc_dphi);
+                  bbcs_vneta_both_docalib[ih][icent][izvtx]->Fill(eta, cosbbc_dphi);
+                }
+            }
         } // end loop over central arm tracks
 
     } // end loop over events
