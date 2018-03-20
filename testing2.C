@@ -29,7 +29,12 @@ float d_pmt_x[64];
 float d_pmt_y[64];
 float d_pmt_z = -1443.5; // same for all tubes
 
-bool DIAG = false;
+const bool DIAG = false;
+
+// prelim HeAu study from Darren and Sanghoon
+const float beam_x = -0.16;
+const float beam_y = 0.06;
+const float beam_angle = -0.001;
 
 using namespace std;
 
@@ -319,11 +324,17 @@ void flatten(int runnumber, int passnumber)
       float vtx_y = 0; // temp
       for ( int i = 0; i < ntubes; ++i )
         {
-          float bbc_charge = ktree->d_BBC_charge[128];
+          float bbc_charge = ktree->d_BBC_charge[i]; // there was a very stupid bug here...
           if ( bbc_charge <= 0 ) continue;
           float bbc_x      = d_pmt_x[i] - vtx_x * 10; // pmt location in mm
           float bbc_y      = d_pmt_y[i] - vtx_y * 10;
           float bbc_z      = d_pmt_z    - vtx_z * 10;
+          // --- beam offsets (subtract offsets to get to 0,0)
+          bbc_x -= beam_x;
+          bbc_y -= beam_y;
+          // --- beam angle (beam has angle, rotate by -angle to get back to 0)
+          bbc_x = bbc_z * sin(-beam_angle) + bbc_x * cos(-beam_angle);
+          // --- calculate the phi with the offset and rotated coordinates
           float phi = atan2(bbc_y,bbc_x);
           for ( int ih = 1; ih < NHAR; ++ih )
             {
