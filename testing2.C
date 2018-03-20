@@ -266,12 +266,12 @@ void flatten(int runnumber, int passnumber)
   int nevents = ntp_event_chain->GetEntries(); // number of events in tree
   ntp_event *ktree = new ntp_event(ntp_event_chain); // pointer to tree
   cout << "Will attempt to process " << nevents << " events for this run" << endl;
-  for ( int i = 0; i < nevents; ++i ) // loop over events
+  for ( int ievent = 0; ievent < nevents; ++ievent ) // loop over events
     {
-      if ( i > 1000 ) break;
+      //if ( i > 1000 ) break;
 
       // --- get this event
-      ktree->GetEntry(i);
+      ktree->GetEntry(ievent);
 
       // --- get some event variables
       Float_t event = ktree->event;
