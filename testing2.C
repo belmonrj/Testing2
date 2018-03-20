@@ -145,6 +145,25 @@ void flatten(int runnumber, int passnumber)
           heta->Fill(eta);
         } // end loop over fvtx tracks
 
+      // --- do a loop over central arm tracks
+      int ntrk = ktree->d_ntrk;
+      for ( int i = 0; i < ntrk; ++i )
+        {
+          float px = ktree->d_cntpx[i];
+          float py = ktree->d_cntpy[i];
+          float pz = ktree->d_cntpz[i];
+          float charge = ktree->d_cntcharge[i];
+          float pc3sdz = ktree->d_cntpc3sdz[i];
+          float pc3sdphi = ktree->d_cntpc3sdphi[i];
+
+          float phi = atan2(py, px);
+          float pt = sqrt(px * px + py * py);
+          float theta = atan2(pt, pz);
+          float eta = -log(tan(theta / 2));
+
+          heta->Fill(eta);
+        } // end loop over central arm tracks
+
     } // end loop over events
 
   cout << "Finished processing events" << endl;
