@@ -81,6 +81,8 @@ void flatten(int runnumber, int passnumber)
   mData1->cd();
 
   TH1D* heta = new TH1D("heta","",32,-3.2,3.2);
+  TH1D* heta_cnt = new TH1D("heta_cnt","",32,-3.2,3.2);
+  TH1D* heta_fvtx = new TH1D("heta_fvtx","",32,-3.2,3.2);
 
   //------------------------------------------------------------//
   //  Finished initializing histograms                          //
@@ -168,6 +170,7 @@ void flatten(int runnumber, int passnumber)
           float dcax = ktree->fDCA_X[i];
           float dcay = ktree->fDCA_Y[i];
           heta->Fill(eta);
+          heta_fvtx->Fill(eta);
         } // end loop over fvtx tracks
 
       // --- do a loop over central arm tracks
@@ -187,6 +190,7 @@ void flatten(int runnumber, int passnumber)
           float eta = -log(tan(theta / 2));
 
           heta->Fill(eta);
+          heta_cnt->Fill(eta);
         } // end loop over central arm tracks
 
     } // end loop over events
