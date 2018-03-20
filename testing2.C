@@ -262,7 +262,7 @@ void flatten(int runnumber, int passnumber)
   cout << "Will attempt to process " << nevents << " events for this run" << endl;
   for ( int i = 0; i < nevents; ++i ) // loop over events
     {
-      if ( i > 1000 ) break;
+      //if ( i > 1000 ) break;
 
       // --- get this event
       ktree->GetEntry(i);
