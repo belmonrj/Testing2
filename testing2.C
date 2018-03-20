@@ -270,17 +270,16 @@ void flatten(int runnumber, int passnumber)
       Float_t bbc_qn = ktree->bbc_qn;
       Float_t bbc_qs = ktree->bbc_qs;
 
-      int icent = -1;
-      if ( centrality > -1 )
-        {
-          if ( centrality <= 5 ) icent = 0;
-          else if ( centrality <= 10 ) icent = 1;
-          else if ( centrality <= 20 ) icent = 2;
-          else if ( centrality <= 40 ) icent = 3;
-          else if ( centrality <= 60 ) icent = 4;
-          else if ( centrality <= 88 ) icent = 5;
-        }
+      if ( centrality < 0 || centrality > 99 ) continue;
+      int icent = 0;
+      if ( centrality <= 5 ) icent = 0;
+      else if ( centrality <= 10 ) icent = 1;
+      else if ( centrality <= 20 ) icent = 2;
+      else if ( centrality <= 40 ) icent = 3;
+      else if ( centrality <= 60 ) icent = 4;
+      else if ( centrality <= 88 ) icent = 5;
 
+      if ( fabs(bbc_z) > 10 ) continue;
       int izvtx = NZPS * (bbc_z+10) / 20;
       if ( izvtx < 0 || izvtx >= NZPS )
         {
@@ -419,6 +418,7 @@ void flatten(int runnumber, int passnumber)
                       if (passnumber > 0) flt[icent][izvtx][ih][id]->Fill(io + NORD * 3.0, ss);
                     }
                   sumxy[ih][id][3] = psi / (ih + 1.0);
+                  psi_af[icent][ih][id]->Fill(izvtx, sumxy[ih][id][3]);
                 } // end if weight > 0
               else
                 {
@@ -426,6 +426,9 @@ void flatten(int runnumber, int passnumber)
                 } // otherwise set psi to some crazy number
             } // detectors
         } // harmonics
+
+      // --- don't bother continuing unless on final pass
+      if ( passnumber < 3 ) continue;
 
       // --- flattening is done, now move on to event plane analysis
 
