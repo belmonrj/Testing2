@@ -244,6 +244,27 @@ void flatten(int runnumber, int passnumber)
   TH1D* heta = new TH1D("heta","",32,-3.2,3.2);
   TH1D* heta_cnt = new TH1D("heta_cnt","",32,-3.2,3.2);
   TH1D* heta_fvtx = new TH1D("heta_fvtx","",32,-3.2,3.2);
+  TH1D* hphi = new TH1D("hphi","",64,-3.2,3.2);
+  TH1D* hphi_cnt = new TH1D("hphi_cnt","",64,-3.2,3.2);
+  TH1D* hphi_fvtx = new TH1D("hphi_fvtx","",64,-3.2,3.2);
+  TH1D* arheta = new TH1D("arheta","",32,-3.2,3.2);
+  TH1D* arheta_cnt = new TH1D("arheta_cnt","",32,-3.2,3.2);
+  TH1D* arheta_fvtx = new TH1D("arheta_fvtx","",32,-3.2,3.2);
+  TH1D* arhphi = new TH1D("arhphi","",64,-3.2,3.2);
+  TH1D* arhphi_cnt = new TH1D("arhphi_cnt","",64,-3.2,3.2);
+  TH1D* arhphi_fvtx = new TH1D("arhphi_fvtx","",64,-3.2,3.2);
+  TH1D* brheta = new TH1D("brheta","",32,-3.2,3.2);
+  TH1D* brheta_cnt = new TH1D("brheta_cnt","",32,-3.2,3.2);
+  TH1D* brheta_fvtx = new TH1D("brheta_fvtx","",32,-3.2,3.2);
+  TH1D* brhphi = new TH1D("brhphi","",64,-3.2,3.2);
+  TH1D* brhphi_cnt = new TH1D("brhphi_cnt","",64,-3.2,3.2);
+  TH1D* brhphi_fvtx = new TH1D("brhphi_fvtx","",64,-3.2,3.2);
+
+  TH1D* hbbcs_psin_docalib[NHAR] = {NULL};
+  for ( int ih = 1; ih < NHAR; ++ih )
+    {
+      hbbcs_psin_docalib[ih] = new TH1D(Form("hbbcs_psi%d_docalib",ih+1),"",640,-3.2,3.2);
+    }
 
   //------------------------------------------------------------//
   //  Finished initializing histograms                          //
@@ -273,7 +294,7 @@ void flatten(int runnumber, int passnumber)
   cout << "Will attempt to process " << nevents << " events for this run" << endl;
   for ( int ievent = 0; ievent < nevents; ++ievent ) // loop over events
     {
-      //if ( ievent > 1000 ) break;
+      if ( ievent > 1000 ) break;
 
       // --- get this event
       ktree->GetEntry(ievent);
@@ -477,12 +498,14 @@ void flatten(int runnumber, int passnumber)
       for ( int ih = 1; ih < NHAR; ++ih )
         {
           bbcs_psin_docalib[ih] = (sumxy[ih][bbcs_index][2] > 0) ? sumxy[ih][bbcs_index][3] : -9999.9;
+          hbbcs_psin_docalib[ih]->Fill(bbcs_psin_docalib[ih]);
         }
 
       // --- do a loop over fvtx tracks
       int nfvtxt = ktree->ntracklets;
       for ( int i = 0; i < nfvtxt; ++i )
         {
+          // --- get the variables from the tree
           float eta = ktree->feta[i];
           float the = ktree->fthe[i];
           float phi = ktree->fphi[i];
@@ -491,15 +514,41 @@ void flatten(int runnumber, int passnumber)
           int nhits = ktree->fnhits[i];
           float dcax = ktree->fDCA_X[i];
           float dcay = ktree->fDCA_Y[i];
+          // --- fill some diagnostic histograms
           hdcax->Fill(dcax);
           hdcay->Fill(dcay);
           hnhit->Fill(nhits);
           hchi2->Fill(chi2ndf);
           heta->Fill(eta);
           heta_fvtx->Fill(eta);
+          hphi->Fill(phi);
+          hphi_fvtx->Fill(phi);
+          // --- make some tracking cuts (will be made in trees next time)
           if ( chi2ndf < 0 || chi2ndf > 5 ) continue;
           if ( fabs(dcax) > 2 || fabs(dcay) > 2 ) continue;
           if ( nhits < 3 ) continue;
+          // --- fill some diagnostic histos after cuts
+          brheta->Fill(eta);
+          brheta_fvtx->Fill(eta);
+          brhphi->Fill(phi);
+          brhphi_fvtx->Fill(phi);
+          // --- apply rotations
+          double pxo = sin(the) * cos(phi);
+          double pyo = sin(the) * sin(phi);
+          double pzo = cos(the);
+          double px = pzo*sin(-beam_angle) + pxo*cos(-beam_angle);
+          double py = pyo;
+          double pz = -pxo*sin(-beam_angle) + pzo*cos(-beam_angle);
+          double p = sqrt(px*px + py*py + pz*pz);
+          // --- redefine angles with new rotations
+          phi = atan2(py, px);
+          the = acos(pz/p);
+          eta = -log(tan(the/2));
+          // --- fill some diagnostic histos with rotated coordinates
+          arheta->Fill(eta);
+          arheta_fvtx->Fill(eta);
+          arhphi->Fill(phi);
+          arhphi_fvtx->Fill(phi);
           for ( int ih = 1; ih < NHAR; ++ih )
             {
               int n = ih + 1;
@@ -516,26 +565,44 @@ void flatten(int runnumber, int passnumber)
       int ntrk = ktree->d_ntrk;
       for ( int i = 0; i < ntrk; ++i )
         {
+          // --- get the variables from the tree
           float px = ktree->d_cntpx[i];
           float py = ktree->d_cntpy[i];
           float pz = ktree->d_cntpz[i];
           float charge = ktree->d_cntcharge[i];
           float pc3sdz = ktree->d_cntpc3sdz[i];
           float pc3sdphi = ktree->d_cntpc3sdphi[i];
-
+          // --- calculate the coordinates
+          float phi = atan2(py, px);
+          float pt = sqrt(px*px + py*py);
+          float p = sqrt(px*px + py*py + pz*pz);
+          float the = atan2(pt, pz);
+          float eta = -log(tan(the/2));
+          // --- fill diagnostic histos
           hpc3sdz->Fill(pc3sdz);
           hpc3sdf->Fill(pc3sdphi);
-
-          if ( fabs(pc3sdz) > 3 || fabs(pc3sdphi) > 3 ) continue;
-
-          float phi = atan2(py, px);
-          float pt = sqrt(px * px + py * py);
-          float theta = atan2(pt, pz);
-          float eta = -log(tan(theta / 2));
-
           heta->Fill(eta);
           heta_cnt->Fill(eta);
-
+          hphi->Fill(phi);
+          hphi_cnt->Fill(phi);
+          // --- apply rotation
+          float pxo = px;
+          float pyo = py;
+          float pzo = pz;
+          px = pzo*sin(-beam_angle) + pxo*cos(-beam_angle);
+          py = pyo;
+          pz = -pxo*sin(-beam_angle) + pzo*cos(-beam_angle);
+          // --- redefine angles with new rotations
+          phi = atan2(py, px);
+          the = acos(pz/p);
+          eta = -log(tan(the/2));
+          // --- fill diagnostic histos with new coordinates
+          arheta->Fill(eta);
+          arheta_cnt->Fill(eta);
+          arhphi->Fill(phi);
+          arhphi_cnt->Fill(phi);
+          // --- all tracking cuts are made in the tree code, so move on to analysis
+          // --- loop over harmonics to do EP ana
           for ( int ih = 1; ih < NHAR; ++ih )
             {
               int n = ih + 1;
