@@ -85,13 +85,13 @@ void flatten(int runnumber, int passnumber)
   float    four[NMUL][NZPS][NHAR][NDETSHORT][2][NORD]; // fourier components for flattening
 
   //Initializing the calibration parameters to be read in from the file
-  for ( int ic = 0; ic < NMUL; ic ++ )
+  for ( int ic = 0; ic < NMUL; ++ic )
     {
-      for ( int iz = 0; iz < NZPS; iz++ )
+      for ( int iz = 0; iz < NZPS; ++iz )
         {
-          for ( int ih = 1; ih < NHAR; ih++ )
+          for ( int ih = 1; ih < NHAR; ++ih )
             {
-              for ( int id = 0; id < NDETSHORT; id++ )
+              for ( int id = 0; id < NDETSHORT; ++id )
                 {
                   for ( int ib = 0; ib < 2; ib++ )
                     {
@@ -102,7 +102,7 @@ void flatten(int runnumber, int passnumber)
                       widt[ic][iz][ih][id][ib] = 1.0;
 
                       // --- fourier components for flattening
-                      for ( int io = 0; io < NORD; io++ )
+                      for ( int io = 0; io < NORD; ++io )
                         {
                           four[ic][iz][ih][id][ib][io] = 0.0;
                         } // orders
@@ -119,13 +119,13 @@ void flatten(int runnumber, int passnumber)
       float f0, f1, f2, f3; //f4,f5,f6,f7;
       ifstream ifs;
       ifs.open(calibfile);
-      for ( int ic = 0; ic < NMUL; ic++ )
+      for ( int ic = 0; ic < NMUL; ++ic )
         {
-          for ( int iz = 0; iz < NZPS; iz++ )
+          for ( int iz = 0; iz < NZPS; ++iz )
             {
-              for ( int ih = 1; ih < NHAR; ih++ )
+              for ( int ih = 1; ih < NHAR; ++ih )
                 {
-                  for ( int id = 0; id < NDETSHORT; id++ )
+                  for ( int id = 0; id < NDETSHORT; ++id )
                     {
                       ifs >> f0 >> f1 >> f2 >> f3;
                       if ( f1 <= 0.0 ) f1 = 1.0;
@@ -139,7 +139,7 @@ void flatten(int runnumber, int passnumber)
                       if ( id == 3 && ih == 1 && DIAG ) cout << f0 << " " << f1 << " " << f2 << " " << f3 << endl; //bbc psi 2 parameters
                       for ( int ib = 0; ib < 2; ib++ )
                         {
-                          for ( int io = 0; io < NORD; io++ )
+                          for ( int io = 0; io < NORD; ++io )
                             {
                               ifs >> four[ic][iz][ih][id][ib][io];
                             } // orders
@@ -172,13 +172,13 @@ void flatten(int runnumber, int passnumber)
 
   // --- profile histograms for average of Psi and flattening parameters
   char name[200];
-  for ( int ic = 0; ic < NMUL; ic ++ )
+  for ( int ic = 0; ic < NMUL; ++ic )
     {
-      for ( int iz = 0; iz < NZPS; iz++ )
+      for ( int iz = 0; iz < NZPS; ++iz )
         {
-          for ( int ih = 1; ih < NHAR; ih++ )
+          for ( int ih = 1; ih < NHAR; ++ih )
             {
-              for ( int id = 0; id < NDETSHORT; id++ )
+              for ( int id = 0; id < NDETSHORT; ++id )
                 {
                   // --- average (of?)
                   sprintf(name, "ave_%d_%d_%d_%d", ic, iz, ih, id);
@@ -192,11 +192,11 @@ void flatten(int runnumber, int passnumber)
     } // loop over centrality bins
 
   // --- TH2D histograms for Q vector components
-  for ( int ic = 0; ic < NMUL; ic++ )
+  for ( int ic = 0; ic < NMUL; ++ic )
     {
-      for ( int ih = 1; ih < NHAR; ih++)
+      for ( int ih = 1; ih < NHAR; ++ih)
         {
-          for ( int id = 0; id < NDETSHORT; id++)
+          for ( int id = 0; id < NDETSHORT; ++id)
             {
               // --- psi_bf (event plane before recentering and flattening)
               sprintf(name, "psi_bf_%d_%d_%d", ic, ih, id);
@@ -332,26 +332,26 @@ void flatten(int runnumber, int passnumber)
       //------------------------------------------------------------//
       // --- still plenty of room for improvement here
       float sumxy[NHAR][NDETSHORT][4];
-      for (int i = 0; i < NHAR; i++)
+      for ( int i = 0; i < NHAR; i++)
         {
-          for (int j = 0; j < NDETSHORT; j++)
+          for ( int j = 0; j < NDETSHORT; j++)
             {
-              for (int k = 0; k < 4; k++) //qx qy qw psi
+              for ( int k = 0; k < 4; k++) //qx qy qw psi
                 {
                   sumxy[i][j][k] = 0; // initialize to 0
                 } // x,y,w,psi
             } // detectors
         } // harmonics
       // --- set values to BBC values from above
-      for (int ih = 1; ih < NHAR; ih++)
+      for ( int ih = 1; ih < NHAR; ++ih)
         {
           sumxy[ih][bbcs_index][0] = bbc_qxn[ih];
           sumxy[ih][bbcs_index][1] = bbc_qyn[ih];
           sumxy[ih][bbcs_index][2] = bbc_qw;
         }
-      for ( int ih = 1; ih < NHAR; ih++ )
+      for ( int ih = 1; ih < NHAR; ++ih )
         {
-          for (int id = 0; id < NDETSHORT; id++ )
+          for ( int id = 0; id < NDETSHORT; ++id )
             {
               if (sumxy[ih][id][2] > 0)
                 {
@@ -362,9 +362,9 @@ void flatten(int runnumber, int passnumber)
                 } // check on weight
             } // detectors
         } // harmonics
-      for ( int ih = 1; ih < NHAR; ih++ )
+      for ( int ih = 1; ih < NHAR; ++ih )
         {
-          for ( int id = 0; id < NDETSHORT; id++ )
+          for ( int id = 0; id < NDETSHORT; ++id )
             {
               if ( sumxy[ih][id][2] > 0.0 )
                 {
@@ -406,7 +406,7 @@ void flatten(int runnumber, int passnumber)
                   if ( ih == 1 && id == 0 && DIAG )  cout << "psi-1 bbc: " << psi << endl;
                   float dp = 0.0;
                   // --- flattening part, fourier components of psi distribution
-                  for (int io = 0; io < NORD; io++)
+                  for ( int io = 0; io < NORD; ++io )
                     {
                       float cc = cos((io + 1.0) * psi);
                       float ss = sin((io + 1.0) * psi);
@@ -422,7 +422,7 @@ void flatten(int runnumber, int passnumber)
                   psi += dp; // shift psi by...
                   psi = atan2(sin(psi), cos(psi)); // trick to readjust the range
                   if ( ih == 1 && id == 0 && DIAG )  cout << "psi-2 bbc: " << psi << endl;
-                  for (int io = 0; io < NORD; io++)
+                  for ( int io = 0; io < NORD; ++io )
                     {
                       float cc = cos((io + 1.0) * psi);
                       float ss = sin((io + 1.0) * psi);
@@ -438,9 +438,9 @@ void flatten(int runnumber, int passnumber)
                 } // otherwise set psi to some crazy number
             } // detectors
         } // harmonics
-      for ( int ih = 1; ih < NHAR; ih++ )
+      for ( int ih = 1; ih < NHAR; ++ih )
         {
-          for ( int id = 0; id < NDETSHORT; id++ )
+          for ( int id = 0; id < NDETSHORT; ++id )
             {
               if ( sumxy[ih][id][2] > 0 )
                 {
