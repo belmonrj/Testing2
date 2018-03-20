@@ -370,11 +370,12 @@ void flatten(int runnumber, int passnumber)
         } // end loop over tubes
 
       // --- make a simple raw event plane
-      float bbcs_psin_raw[NHAR];
+      float bbcs_psin_raw[NHAR] = {0};
       for ( int ih = 0; ih < NHAR; ++ih )
         {
-          bbcs_psin_raw[ih] = atan2(bbc_qyn[ih], bbc_qxn[ih]);
-          //hbbcs_psin_raw[ih]->Fill(bbcs_psin_raw[ih]);
+          if ( bbc_qw > 0 ) bbcs_psin_raw[ih] = atan2(bbc_qyn[ih], bbc_qxn[ih]);
+          else bbcs_psin_raw[ih] = -9999;
+          hbbcs_psin_raw[ih]->Fill(bbcs_psin_raw[ih]);
         }
 
       // --- make a simple recentered event plane
