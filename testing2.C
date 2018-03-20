@@ -374,7 +374,7 @@ void flatten(int runnumber, int passnumber)
       for ( int ih = 0; ih < NHAR; ++ih )
         {
           bbcs_psin_raw[ih] = atan2(bbc_qyn[ih], bbc_qxn[ih]);
-          hbbcs_psin_raw[ih]->Fill(bbcs_psin_raw[ih]);
+          //hbbcs_psin_raw[ih]->Fill(bbcs_psin_raw[ih]);
         }
 
       // --- make a simple recentered event plane
@@ -456,7 +456,7 @@ void flatten(int runnumber, int passnumber)
                       if ( id == 0 )
                         {
                           bbcs_psin_recenter[ih] = sumxy[ih][id][3];
-                          //hbbcs_psin_recenter[ih]->Fill(bbcs_psin_recenter[ih]);
+                          hbbcs_psin_recenter[ih]->Fill(bbcs_psin_recenter[ih]);
                         }
                     }
 
