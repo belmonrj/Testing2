@@ -137,14 +137,17 @@ void flatten(int runnumber, int passnumber)
       float bbc_qxn[NHAR] = {0};
       float bbc_qyn[NHAR] = {0};
       float bbc_qw = 0;
+      float vtx_x = 0; // temp
+      float vtx_y = 0; // temp
       for ( int i = 0; i < ntubes; ++i )
         {
           float bbc_charge = ktree->d_BBC_charge[128];
           if ( bbc_charge <= 0 ) continue;
-          float bbc_x      = d_pmt_x[ipmt] - vtx_x * 10; //pmt location in mm
-          float bbc_y      = d_pmt_y[ipmt] - vtx_y * 10;
-          float bbc_z      = d_pmt_z       - vtx_z * 10;
-          for (int ih = 1; ih < NHAR; ++ih)
+          float bbc_x      = d_pmt_x[i] - vtx_x * 10; // pmt location in mm
+          float bbc_y      = d_pmt_y[i] - vtx_y * 10;
+          float bbc_z      = d_pmt_z    - vtx_z * 10;
+          float phi = atan2(bbc_y,bbc_x);
+          for ( int ih = 1; ih < NHAR; ++ih )
             {
               bbc_qxn[ih] += bbc_charge * cos((ih+1) * phi);
               bbc_qyn[ih] += bbc_charge * sin((ih+1) * phi);
