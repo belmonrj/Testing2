@@ -93,7 +93,7 @@ void flatten(int runnumber, int passnumber)
             {
               for ( int id = 0; id < NDETSHORT; ++id )
                 {
-                  for ( int ib = 0; ib < 2; ib++ )
+                  for ( int ib = 0; ib < 2; ++ib )
                     {
                       // --- mean (of q-vectors)
                       mean[ic][iz][ih][id][ib] = 0.0;
@@ -137,7 +137,7 @@ void flatten(int runnumber, int passnumber)
                       if ( id == 2 && ih == 1 && DIAG ) cout << f0 << " " << f1 << " " << f2 << " " << f3 << endl; //bbc psi 2 parameters
                       if ( id == 2 && ih == 1 && DIAG ) cout << "---" << endl;
                       if ( id == 3 && ih == 1 && DIAG ) cout << f0 << " " << f1 << " " << f2 << " " << f3 << endl; //bbc psi 2 parameters
-                      for ( int ib = 0; ib < 2; ib++ )
+                      for ( int ib = 0; ib < 2; ++ib )
                         {
                           for ( int io = 0; io < NORD; ++io )
                             {
@@ -163,12 +163,12 @@ void flatten(int runnumber, int passnumber)
   mData1->cd();
 
   // --- flattening parameters output to file
-  TProfile *ave[NMUL][NZPS][NHAR][NDETSHORT]; // average Psi
-  TProfile *flt[NMUL][NZPS][NHAR][NDETSHORT]; // flattening parameters
+  TProfile* ave[NMUL][NZPS][NHAR][NDETSHORT]; // average Psi
+  TProfile* flt[NMUL][NZPS][NHAR][NDETSHORT]; // flattening parameters
 
-  TH2D     *psi_bf[NMUL][NHAR][NDETSHORT];
-  TH2D     *psi_mf[NMUL][NHAR][NDETSHORT];
-  TH2D     *psi_af[NMUL][NHAR][NDETSHORT];
+  TH2D* psi_bf[NMUL][NHAR][NDETSHORT];
+  TH2D* psi_mf[NMUL][NHAR][NDETSHORT];
+  TH2D* psi_af[NMUL][NHAR][NDETSHORT];
 
   // --- profile histograms for average of Psi and flattening parameters
   char name[200];
@@ -226,9 +226,9 @@ void flatten(int runnumber, int passnumber)
             {
               int n = ih + 1; // harmonic number
               bbcs_vneta_both_docalib[ih][ic][iz] = new TProfile(Form("bbcs_v%ieta_both_docalib_cent%d_zvtx%d", n, ic, iz), "", 32, -3.2, 3.2, -1.1, 1.1);
-            } // iz
-        } // ic
-    } // ih
+            } // z-vertex bins
+        } // centrality bins
+    } // harmonics
 
   TH1D* heta = new TH1D("heta","",32,-3.2,3.2);
   TH1D* heta_cnt = new TH1D("heta_cnt","",32,-3.2,3.2);
@@ -372,7 +372,7 @@ void flatten(int runnumber, int passnumber)
                 }
               if ( sumxy[ih][id][2] > 0.0 ) // check on weight (x,y,w,psi)
                 {
-                  for ( int ib = 0; ib < 2; ib++ )
+                  for ( int ib = 0; ib < 2; ++ib )
                     {
                       sumxy[ih][id][ib] /= sumxy[ih][id][2]; // normalize to the weight
 
