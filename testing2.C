@@ -371,9 +371,9 @@ void flatten(int runnumber, int passnumber)
 
       // --- make a simple raw event plane
       float bbcs_psin_raw[NHAR] = {0};
-      for ( int ih = 0; ih < NHAR; ++ih )
+      for ( int ih = 1; ih < NHAR; ++ih )
         {
-          if ( bbc_qw > 0 ) bbcs_psin_raw[ih] = atan2(bbc_qyn[ih], bbc_qxn[ih]);
+          if ( bbc_qw > 0 ) bbcs_psin_raw[ih] = atan2(bbc_qyn[ih], bbc_qxn[ih]) / (ih+1);
           else bbcs_psin_raw[ih] = -9999;
           hbbcs_psin_raw[ih]->Fill(bbcs_psin_raw[ih]);
         }
