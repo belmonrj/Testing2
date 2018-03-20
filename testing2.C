@@ -230,6 +230,12 @@ void flatten(int runnumber, int passnumber)
         } // centrality bins
     } // harmonics
 
+  TH1D* hpc3sdz = new TH1D("hpc3sdz","",200,-5,5);
+  TH1D* hpc3sdf = new TH1D("hpc3sdf","",200,-5,5);
+  TH1D* hdcax = new TH1D("hdcax","",200,-5,5);
+  TH1D* hdcay = new TH1D("hdcay","",200,-5,5);
+  TH1D* hnhit = new TH1D("hnhit","",10,-0.5,9.5);
+  TH1D* hchi2 = new TH1D("hchi2","",200,-0.5,9.5);
   TH1D* heta = new TH1D("heta","",32,-3.2,3.2);
   TH1D* heta_cnt = new TH1D("heta_cnt","",32,-3.2,3.2);
   TH1D* heta_fvtx = new TH1D("heta_fvtx","",32,-3.2,3.2);
@@ -262,7 +268,7 @@ void flatten(int runnumber, int passnumber)
   cout << "Will attempt to process " << nevents << " events for this run" << endl;
   for ( int i = 0; i < nevents; ++i ) // loop over events
     {
-      //if ( i > 1000 ) break;
+      if ( i > 1000 ) break;
 
       // --- get this event
       ktree->GetEntry(i);
@@ -469,13 +475,20 @@ void flatten(int runnumber, int passnumber)
           float eta = ktree->feta[i];
           float the = ktree->fthe[i];
           float phi = ktree->fphi[i];
-          float ch2ndf = ktree->fchisq[i];
+          float chi2ndf = ktree->fchisq[i];
           int arm = ktree->farm[i];
-          int nhist = ktree->fnhits[i];
+          int nhits = ktree->fnhits[i];
           float dcax = ktree->fDCA_X[i];
           float dcay = ktree->fDCA_Y[i];
+          hdcax->Fill(dcax);
+          hdcay->Fill(dcay);
+          hnhit->Fill(nhits);
+          hchi2->Fill(chi2ndf);
           heta->Fill(eta);
           heta_fvtx->Fill(eta);
+          if ( chi2ndf < 0 || chi2ndf > 5 ) continue;
+          if ( fabs(dcax) > 2 || fabs(dcay) > 2 ) continue;
+          if ( nhits < 3 ) continue;
           for ( int ih = 1; ih < NHAR; ++ih )
             {
               int n = ih + 1;
@@ -498,6 +511,11 @@ void flatten(int runnumber, int passnumber)
           float charge = ktree->d_cntcharge[i];
           float pc3sdz = ktree->d_cntpc3sdz[i];
           float pc3sdphi = ktree->d_cntpc3sdphi[i];
+
+          hpc3sdz->Fill(pc3sdz);
+          hpc3sdf->Fill(pc3sdphi);
+
+          if ( fabs(pc3sdz) > 3 || fabs(pc3sdphi) > 3 ) continue;
 
           float phi = atan2(py, px);
           float pt = sqrt(px * px + py * py);
