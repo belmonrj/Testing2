@@ -348,7 +348,6 @@ void flatten(int runnumber, int passnumber)
                 } // check on weight
             } // detectors
         } // harmonics
-      //int icent = 0;
       for ( int ih = 1; ih < NHAR; ih++ )
         {
           for ( int id = 0; id < NDETSHORT; id++ )
@@ -418,7 +417,6 @@ void flatten(int runnumber, int passnumber)
                       if (passnumber > 0) flt[icent][izvtx][ih][id]->Fill(io + NORD * 3.0, ss);
                     }
                   sumxy[ih][id][3] = psi / (ih + 1.0);
-                  psi_af[icent][ih][id]->Fill(izvtx, sumxy[ih][id][3]);
                 } // end if weight > 0
               else
                 {
@@ -426,11 +424,29 @@ void flatten(int runnumber, int passnumber)
                 } // otherwise set psi to some crazy number
             } // detectors
         } // harmonics
+      for ( int ih = 1; ih < NHAR; ih++ )
+        {
+          for ( int id = 0; id < NDETSHORT; id++ )
+            {
+              if ( sumxy[ih][id][2] > 0 )
+                {
+                  psi_af[icent][ih][id]->Fill(izvtx, sumxy[ih][id][3]);
+                  if ( DIAG ) cout << "CORR: for id: " << id << " psi: " << sumxy[ih][id][3] << endl;
+                } // check on weight
+            } // detectors
+        } // harmonics
 
       // --- don't bother continuing unless on final pass
       if ( passnumber < 3 ) continue;
 
       // --- flattening is done, now move on to event plane analysis
+
+      // --- get the bbcs event plane from the flattening procedure
+      float bbcs_psin_docalib[NHAR] = {0};
+      for ( int ih = 1; ih < NHAR; ++ih )
+        {
+          bbcs_psin_docalib[ih] = (sumxy[ih][bbcs_index][2] > 0) ? sumxy[ih][bbcs_index][3] : -9999.9;
+        }
 
       // --- do a loop over fvtx tracks
       int nfvtxt = ktree->ntracklets;
