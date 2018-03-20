@@ -260,9 +260,13 @@ void flatten(int runnumber, int passnumber)
   TH1D* brhphi_cnt = new TH1D("brhphi_cnt","",64,-3.2,3.2);
   TH1D* brhphi_fvtx = new TH1D("brhphi_fvtx","",64,-3.2,3.2);
 
+  TH1D* hbbcs_psin_raw[NHAR] = {NULL};
+  TH1D* hbbcs_psin_recenter[NHAR] = {NULL};
   TH1D* hbbcs_psin_docalib[NHAR] = {NULL};
   for ( int ih = 1; ih < NHAR; ++ih )
     {
+      hbbcs_psin_raw[ih] = new TH1D(Form("hbbcs_psi%d_raw",ih+1),"",640,-3.2,3.2);
+      hbbcs_psin_recenter[ih] = new TH1D(Form("hbbcs_psi%d_recenter",ih+1),"",640,-3.2,3.2);
       hbbcs_psin_docalib[ih] = new TH1D(Form("hbbcs_psi%d_docalib",ih+1),"",640,-3.2,3.2);
     }
 
@@ -365,6 +369,17 @@ void flatten(int runnumber, int passnumber)
           bbc_qw += bbc_charge;
         } // end loop over tubes
 
+      // --- make a simple raw event plane
+      float bbcs_psin_raw[NHAR];
+      for ( int ih = 0; ih < NHAR; ++ih )
+        {
+          bbcs_psin_raw[ih] = atan2(bbc_qyn[ih], bbc_qxn[ih]);
+          //hbbcs_psin_raw[ih]->Fill(bbcs_psin_raw[ih]);
+        }
+
+      // --- make a simple recentered event plane
+      float bbcs_psin_recenter[NHAR];
+
       //------------------------------------------------------------//
       //                Flattening iteration                        //
       //------------------------------------------------------------//
@@ -438,6 +453,11 @@ void flatten(int runnumber, int passnumber)
                     {
                       // my own simpler version of the above histogram
                       psi_mf[icent][ih][id]->Fill(izvtx, sumxy[ih][id][3]);
+                      if ( id == 0 )
+                        {
+                          bbcs_psin_recenter[ih] = sumxy[ih][id][3];
+                          //hbbcs_psin_recenter[ih]->Fill(bbcs_psin_recenter[ih]);
+                        }
                     }
 
                   float psi = sumxy[ih][id][3] * (ih + 1.0);
@@ -616,6 +636,50 @@ void flatten(int runnumber, int passnumber)
         } // end loop over central arm tracks
 
     } // end loop over events
+
+      // --- write the parameters out to a text file
+  if ( passnumber < 3 && passnumber > 0 )
+    {
+      // --- previous pass calib file is named above, rename it here
+      sprintf(calibfile, "output/flattening_data/flattening_%d_%d.dat", runnumber, passnumber);
+      cout << "writing calibration file : " << calibfile << endl;
+      ofstream ofs;
+      ofs.open(calibfile);
+
+      cout << "writing out flattening parameters" << endl;
+      //int ic = 0;
+      for ( int ic = 0; ic < NMUL; ic++ )
+        {
+          for ( int iz = 0; iz < NZPS; iz++ )
+            {
+              for ( int ih = 1; ih < NHAR; ih++ )
+                {
+                  for ( int id = 0; id < NDETSHORT; id++ )
+                    {
+                      for ( int ib = 0; ib < 2; ib++ )
+                        {
+                          if ( DIAG ) cout << "writing ave:  " << ic << " " << iz << " " << ih << " " << id << endl;
+                          // write out average qx, qx error, qy, qy error
+                          ofs << ave[ic][iz][ih][id]->GetBinContent(ib + 1) << " ";
+                          ofs << ave[ic][iz][ih][id]->GetBinError  (ib + 1) << " ";
+                        } // x and y
+                      ofs << endl;
+                      for ( int ib = 0; ib < 2; ib++ )
+                        {
+                          for ( int io = 0; io < NORD; io++ )
+                            {
+                              // write first 12 orders for fourier fit of psi
+                              // we are unsure of what's being written out here
+                              ofs << flt[ic][iz][ih][id]->GetBinContent(ib * NORD + io + 1) << " ";
+                            } // orders
+                          ofs << endl;
+                        } // x and y
+                    } // detectors
+                } // harmonics
+            } // z_vertex bins
+        } // centrality bins
+      ofs.close();
+    } // if pass 1 or 2
 
   cout << "Finished processing events" << endl;
   cout << "Now attempting to write output file " << outfile1 << " at memory address " << mData1 << endl;
