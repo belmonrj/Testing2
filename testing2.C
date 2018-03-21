@@ -223,6 +223,11 @@ void flatten(int runnumber, int passnumber)
   // --- analysis histograms
 
   TProfile* bbcs_vneta_both_docalib[NHAR][NMUL][NZPS];
+  TProfile* bbcs_vneta_east_docalib[NHAR][NMUL][NZPS];
+  TProfile* bbcs_vneta_west_docalib[NHAR][NMUL][NZPS];
+  TProfile* bbcs_vnpt_both_docalib[NHAR][NMUL][NZPS];
+  TProfile* bbcs_vnpt_east_docalib[NHAR][NMUL][NZPS];
+  TProfile* bbcs_vnpt_west_docalib[NHAR][NMUL][NZPS];
   for ( int ih = 1; ih < NHAR; ++ih )
     {
       for ( int ic = 0; ic < NMUL; ++ic )
@@ -231,6 +236,11 @@ void flatten(int runnumber, int passnumber)
             {
               int n = ih + 1; // harmonic number
               bbcs_vneta_both_docalib[ih][ic][iz] = new TProfile(Form("bbcs_v%ieta_both_docalib_cent%d_zvtx%d", n, ic, iz), "", 32, -3.2, 3.2, -1.1, 1.1);
+              bbcs_vneta_east_docalib[ih][ic][iz] = new TProfile(Form("bbcs_v%ieta_east_docalib_cent%d_zvtx%d", n, ic, iz), "", 32, -3.2, 3.2, -1.1, 1.1);
+              bbcs_vneta_west_docalib[ih][ic][iz] = new TProfile(Form("bbcs_v%ieta_west_docalib_cent%d_zvtx%d", n, ic, iz), "", 32, -3.2, 3.2, -1.1, 1.1);
+              bbcs_vnpt_both_docalib[ih][ic][iz] = new TProfile(Form("bbcs_v%ieta_both_docalib_cent%d_zvtx%d", n, ic, iz), "", 50, 0.0, 5.0, -1.1, 1.1);
+              bbcs_vnpt_east_docalib[ih][ic][iz] = new TProfile(Form("bbcs_v%ieta_east_docalib_cent%d_zvtx%d", n, ic, iz), "", 50, 0.0, 5.0, -1.1, 1.1);
+              bbcs_vnpt_west_docalib[ih][ic][iz] = new TProfile(Form("bbcs_v%ieta_west_docalib_cent%d_zvtx%d", n, ic, iz), "", 50, 0.0, 5.0, -1.1, 1.1);
             } // z-vertex bins
         } // centrality bins
     } // harmonics
@@ -241,12 +251,14 @@ void flatten(int runnumber, int passnumber)
   TH1D* hdcay = new TH1D("hdcay","",200,-5,5);
   TH1D* hnhit = new TH1D("hnhit","",10,-0.5,9.5);
   TH1D* hchi2 = new TH1D("hchi2","",200,-0.5,9.5);
+  TH1D* hpt = new TH1D("hpt","",50,0.0,5.0);
   TH1D* heta = new TH1D("heta","",32,-3.2,3.2);
   TH1D* heta_cnt = new TH1D("heta_cnt","",32,-3.2,3.2);
   TH1D* heta_fvtx = new TH1D("heta_fvtx","",32,-3.2,3.2);
   TH1D* hphi = new TH1D("hphi","",64,-3.2,3.2);
   TH1D* hphi_cnt = new TH1D("hphi_cnt","",64,-3.2,3.2);
   TH1D* hphi_fvtx = new TH1D("hphi_fvtx","",64,-3.2,3.2);
+  TH1D* arhpt = new TH1D("arhpt","",50,0.0,5.0);
   TH1D* arheta = new TH1D("arheta","",32,-3.2,3.2);
   TH1D* arheta_cnt = new TH1D("arheta_cnt","",32,-3.2,3.2);
   TH1D* arheta_fvtx = new TH1D("arheta_fvtx","",32,-3.2,3.2);
@@ -600,6 +612,7 @@ void flatten(int runnumber, int passnumber)
           float the = atan2(pt, pz);
           float eta = -log(tan(the/2));
           // --- fill diagnostic histos
+          hpt->Fill(pt);
           hpc3sdz->Fill(pc3sdz);
           hpc3sdf->Fill(pc3sdphi);
           heta->Fill(eta);
@@ -617,13 +630,17 @@ void flatten(int runnumber, int passnumber)
           phi = atan2(py, px);
           the = acos(pz/p);
           eta = -log(tan(the/2));
+          pt = sqrt(px*px + py*py);
           // --- fill diagnostic histos with new coordinates
+          arhpt->Fill(pt);
           arheta->Fill(eta);
           arheta_cnt->Fill(eta);
           arhphi->Fill(phi);
           arhphi_cnt->Fill(phi);
           // --- all tracking cuts are made in the tree code, so move on to analysis
           // --- loop over harmonics to do EP ana
+          int dcarm = 0;
+          if (px > 0) dcarm = 1;
           for ( int ih = 1; ih < NHAR; ++ih )
             {
               int n = ih + 1;
@@ -632,6 +649,11 @@ void flatten(int runnumber, int passnumber)
                   double bbc_dphi = phi - bbcs_psin_docalib[ih];
                   double cosbbc_dphi = cos(n * bbc_dphi);
                   bbcs_vneta_both_docalib[ih][icent][izvtx]->Fill(eta, cosbbc_dphi);
+                  if ( dcarm == 0 ) bbcs_vneta_east_docalib[ih][icent][izvtx]->Fill(eta, cosbbc_dphi);
+                  if ( dcarm == 1 ) bbcs_vneta_west_docalib[ih][icent][izvtx]->Fill(eta, cosbbc_dphi);
+                  bbcs_vnpt_both_docalib[ih][icent][izvtx]->Fill(pt, cosbbc_dphi);
+                  if ( dcarm == 0 ) bbcs_vnpt_east_docalib[ih][icent][izvtx]->Fill(pt, cosbbc_dphi);
+                  if ( dcarm == 1 ) bbcs_vnpt_west_docalib[ih][icent][izvtx]->Fill(pt, cosbbc_dphi);
                 }
             }
         } // end loop over central arm tracks
