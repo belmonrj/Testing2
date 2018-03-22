@@ -32,8 +32,8 @@ void simple_plot()
       tp1f_v2eta_z[i]->SetLineColor(i+1);
       tp1f_v2eta_z[i]->Draw("same");
     }
-  c1->Print("v2eta_zbins_heau200.png");
-  c1->Print("v2eta_zbins_heau200.pdf");
+  c1->Print("Figures/v2eta_zbins_heau200.png");
+  c1->Print("Figures/v2eta_zbins_heau200.pdf");
 
 
   TProfile* tp1f_v2eta = (TProfile*)tp1f_v2eta_z[0]->Clone("tp1f_v2eta");
@@ -53,8 +53,8 @@ void simple_plot()
   th1d_v2eta->SetMarkerColor(kBlack);
   th1d_v2eta->Draw("same ex0p");
 
-  c1->Print("v2eta_zcheck_heau200.png");
-  c1->Print("v2eta_zcheck_heau200.pdf");
+  c1->Print("Figures/v2eta_zcheck_heau200.png");
+  c1->Print("Figures/v2eta_zcheck_heau200.pdf");
 
 
   // ----------------------------------------------------------------
@@ -75,14 +75,21 @@ void simple_plot()
   th1d_v2eta->SetMarkerColor(kBlack);
   th1d_v2eta->Draw("same ex0p");
 
-  c1->Print("v2eta_corr_heau200.png");
-  c1->Print("v2eta_corr_heau200.pdf");
+  c1->Print("Figures/v2eta_corr_heau200.png");
+  c1->Print("Figures/v2eta_corr_heau200.pdf");
 
   clean_histo(th1d_v2eta);
   TGraphErrors* tge_sys = get_systematics(th1d_v2eta);
   tge_sys->SetFillColorAlpha(kBlack,0.35);
 
+  ymin = 0.0;
+  ymax = 0.1;
+  if ( hdummy ) delete hdummy;
+  hdummy = new TH2D("hdummy","",1,xmin,xmax,1,ymin,ymax);
   hdummy->Draw();
+  hdummy->GetYaxis()->SetTitle("v_{2}");
+  hdummy->GetYaxis()->SetTitleOffset(1.2);
+  hdummy->GetXaxis()->SetTitle("#eta");
   th1d_v2eta->Draw("same ex0p");
   tge_sys->Draw("2");
 
@@ -94,8 +101,8 @@ void simple_plot()
   latt.DrawLatex(0.56, 0.87, "p+Au #sqrt{s_{_{NN}}} = 200 GeV");
   latt.DrawLatex(0.56, 0.80, "EP: -3.9 < #eta < -3.1");
 
-  c1->Print("v2eta_clean_heau200.png");
-  c1->Print("v2eta_clean_heau200.pdf");
+  c1->Print("Figures/v2eta_clean_heau200.png");
+  c1->Print("Figures/v2eta_clean_heau200.pdf");
 
   // -------------------------------------------------------------
   // --- now make the final plot with the eta dependent correction
@@ -115,8 +122,8 @@ void simple_plot()
   latt.DrawLatex(0.56, 0.87, "p+Au #sqrt{s_{_{NN}}} = 200 GeV");
   latt.DrawLatex(0.56, 0.80, "EP: -3.9 < #eta < -3.1");
 
-  c1->Print("v2eta_final_heau200.png");
-  c1->Print("v2eta_final_heau200.pdf");
+  c1->Print("Figures/v2eta_final_heau200.png");
+  c1->Print("Figures/v2eta_final_heau200.pdf");
 
   TFile* outfile = TFile::Open("heau200_v2eta.root","recreate");
   outfile->cd();
