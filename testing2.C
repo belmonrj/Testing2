@@ -238,9 +238,9 @@ void flatten(int runnumber, int passnumber)
               bbcs_vneta_both_docalib[ih][ic][iz] = new TProfile(Form("bbcs_v%ieta_both_docalib_cent%d_zvtx%d", n, ic, iz), "", 32, -3.2, 3.2, -1.1, 1.1);
               bbcs_vneta_east_docalib[ih][ic][iz] = new TProfile(Form("bbcs_v%ieta_east_docalib_cent%d_zvtx%d", n, ic, iz), "", 32, -3.2, 3.2, -1.1, 1.1);
               bbcs_vneta_west_docalib[ih][ic][iz] = new TProfile(Form("bbcs_v%ieta_west_docalib_cent%d_zvtx%d", n, ic, iz), "", 32, -3.2, 3.2, -1.1, 1.1);
-              bbcs_vnpt_both_docalib[ih][ic][iz] = new TProfile(Form("bbcs_v%ieta_both_docalib_cent%d_zvtx%d", n, ic, iz), "", 50, 0.0, 5.0, -1.1, 1.1);
-              bbcs_vnpt_east_docalib[ih][ic][iz] = new TProfile(Form("bbcs_v%ieta_east_docalib_cent%d_zvtx%d", n, ic, iz), "", 50, 0.0, 5.0, -1.1, 1.1);
-              bbcs_vnpt_west_docalib[ih][ic][iz] = new TProfile(Form("bbcs_v%ieta_west_docalib_cent%d_zvtx%d", n, ic, iz), "", 50, 0.0, 5.0, -1.1, 1.1);
+              bbcs_vnpt_both_docalib[ih][ic][iz] = new TProfile(Form("bbcs_v%ipt_both_docalib_cent%d_zvtx%d", n, ic, iz), "", 50, 0.0, 5.0, -1.1, 1.1);
+              bbcs_vnpt_east_docalib[ih][ic][iz] = new TProfile(Form("bbcs_v%ipt_east_docalib_cent%d_zvtx%d", n, ic, iz), "", 50, 0.0, 5.0, -1.1, 1.1);
+              bbcs_vnpt_west_docalib[ih][ic][iz] = new TProfile(Form("bbcs_v%ipt_west_docalib_cent%d_zvtx%d", n, ic, iz), "", 50, 0.0, 5.0, -1.1, 1.1);
             } // z-vertex bins
         } // centrality bins
     } // harmonics
@@ -639,6 +639,7 @@ void flatten(int runnumber, int passnumber)
           arhphi_cnt->Fill(phi);
           // --- all tracking cuts are made in the tree code, so move on to analysis
           // --- loop over harmonics to do EP ana
+          if ( pt < 0.2 || pt > 3.0 ) continue;
           int dcarm = 0;
           if (px > 0) dcarm = 1;
           for ( int ih = 1; ih < NHAR; ++ih )
