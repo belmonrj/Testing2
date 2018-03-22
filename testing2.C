@@ -315,13 +315,19 @@ void flatten(int runnumber, int passnumber)
       // --- get this event
       ktree->GetEntry(ievent);
 
+      // --- get and cut on the triggers
+      UInt_t  trigger_scaled = ktree->trigger_scaled;
+      UInt_t  trigger_live = ktree->trigger_live;
+      unsigned int trigger_narrow       = 0x00000002;
+      unsigned int trigger_narrowcent48 = 0x00000004;
+      unsigned int trigger_narrowcent49 = 0x00000008;
+      unsigned int passes_trigger = trigger_scaled & trigger_narrowcent48; // subject to change
+      if ( passes_trigger == 0 ) continue;
       // --- get some event variables
       Float_t event = ktree->event;
       Float_t bbc_z = ktree->bbc_z;
       Float_t centrality = ktree->centrality;
       Int_t   npc1 = ktree->npc1;
-      UInt_t  trigger_scaled = ktree->trigger_scaled;
-      UInt_t  trigger_live = ktree->trigger_live;
       Float_t bc_x = ktree->bc_x;
       Float_t bc_y = ktree->bc_y;
       Float_t vtx_z = ktree->vtx_z;
