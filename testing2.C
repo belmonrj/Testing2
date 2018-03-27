@@ -75,6 +75,45 @@ void flatten(int runnumber, int passnumber)
 
   cout << "run number = " << runnumber << " pass number = " << passnumber << endl;
 
+  TString species;
+  int energyflag = 0;
+  // --- Run15pAu200
+  if ( runnumber >= 415751 && runnumber <= 416982 )
+  {
+    species = "heau";
+    energyflag = 200;
+  }
+  // --- Run15pAu200
+  if ( runnumber >= 432637 && runnumber <= 436647 )
+  {
+    species = "pau";
+    energyflag = 200;
+  }
+  // --- Run16dAu200
+  if ( runnumber >= 454774 && runnumber <= 455639 )
+  {
+    species = "dau";
+    energyflag = 200;
+  }
+  // --- Run16dAu62
+  if ( runnumber >= 455792 && runnumber <= 456283 )
+  {
+    species = "dau";
+    energyflag = 62;
+  }
+  // --- Run16dAu20
+  if ( runnumber >= 456652 && runnumber <= 457298 )
+  {
+    species = "dau";
+    energyflag = 20;
+  }
+  // --- Run16dAu39
+  if ( runnumber >= 457634 && runnumber <= 458167 )
+  {
+    species = "dau";
+    energyflag = 39;
+  }
+
 
   int bbcs_index      =  0;
 
@@ -160,8 +199,8 @@ void flatten(int runnumber, int passnumber)
 
 
   char outfile1[300];
-  //sprintf(outfile1, "%s%s%d%s%d%s", "output/files_", species.Data(), energyflag, "/hist_", runNumber, ".root");
-  sprintf(outfile1, "output/files_heau200/hist_%d.root", runnumber);
+  sprintf(outfile1, "%s%s%d%s%d%s", "output/files_", species.Data(), energyflag, "/hist_", runnumber, ".root");
+  //sprintf(outfile1, "output/files_heau200/hist_%d.root", runnumber);
   cout << "histogram output file: " << outfile1 << endl;
 
   TFile *mData1 = TFile::Open(outfile1, "recreate");
@@ -287,8 +326,9 @@ void flatten(int runnumber, int passnumber)
   //------------------------------------------------------------//
 
   // --- get the number of files for this run number
-  //string pipe_out = (string) gSystem->GetFromPipe(Form("ls input_%s/%d_*.root | grep -c r", species.Data(), runNumber));
-  string pipe_out = (string) gSystem->GetFromPipe(Form("ls input_heau200/%d_*.root | grep -c r", runnumber));
+  //string pipe_out = (string) gSystem->GetFromPipe(Form("ls input_%s/%d_*.root | grep -c r", species.Data(), runnumber));
+  //string pipe_out = (string) gSystem->GetFromPipe(Form("ls input_heau200/%d_*.root | grep -c r", runnumber));
+  string pipe_out = (string) gSystem->GetFromPipe(Form("ls input_%s%d/%d_*.root | grep -c r", species.Data(), energyflag, runnumber));
   int nfiles = 0;
   nfiles = atoi(pipe_out.c_str());
   cout << "nfiles: " << nfiles << endl;
@@ -299,7 +339,8 @@ void flatten(int runnumber, int passnumber)
   TChain *ntp_event_chain = new TChain("ntp_event"); // name must match tree name in file
   for ( int ifile = 0; ifile < nfiles; ++ifile )
     {
-      sprintf(filename, "input_heau200/%d_%d.root", runnumber, ifile);
+      //sprintf(filename, "input_heau200/%d_%d.root", runnumber, ifile);
+      sprintf(filename, "input_%s%d/%d_%d.root", species.Data(), energyflag, runnumber, ifile);
       cout << "adding to tchain: " << filename << endl;
       ntp_event_chain->Add(filename);
     }
@@ -310,7 +351,7 @@ void flatten(int runnumber, int passnumber)
   cout << "Will attempt to process " << nevents << " events for this run" << endl;
   for ( int ievent = 0; ievent < nevents; ++ievent ) // loop over events
     {
-      //if ( ievent > 1000 ) break;
+      if ( ievent > 100000 ) break;
 
       // --- get this event
       ktree->GetEntry(ievent);
@@ -318,11 +359,11 @@ void flatten(int runnumber, int passnumber)
       // --- get and cut on the triggers
       UInt_t  trigger_scaled = ktree->trigger_scaled;
       UInt_t  trigger_live = ktree->trigger_live;
-      unsigned int trigger_narrow       = 0x00000002;
-      unsigned int trigger_narrowcent48 = 0x00000004;
-      unsigned int trigger_narrowcent49 = 0x00000008;
-      unsigned int passes_trigger = trigger_scaled & trigger_narrowcent48; // subject to change
-      if ( passes_trigger == 0 ) continue;
+      // unsigned int trigger_narrow       = 0x00000002;
+      // unsigned int trigger_narrowcent48 = 0x00000004;
+      // unsigned int trigger_narrowcent49 = 0x00000008;
+      // unsigned int passes_trigger = trigger_scaled & trigger_narrowcent48; // subject to change
+      // if ( passes_trigger == 0 ) continue;
       // --- get some event variables
       Float_t event = ktree->event;
       Float_t bbc_z = ktree->bbc_z;
