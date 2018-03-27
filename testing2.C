@@ -31,10 +31,6 @@ float d_pmt_z = -1443.5; // same for all tubes
 
 const bool DIAG = false;
 
-// prelim HeAu study from Darren and Sanghoon
-const float beam_x = -0.16;
-const float beam_y = 0.06;
-const float beam_angle = -0.001;
 
 using namespace std;
 
@@ -77,17 +73,32 @@ void flatten(int runnumber, int passnumber)
 
   TString species;
   int energyflag = 0;
-  // --- Run15pAu200
+  // prelim HeAu study from Darren and Sanghoon
+  float beam_x = 0;
+  float beam_y = 0;
+  float beam_angle = 0;
+  // --- Run14HeAu200
   if ( runnumber >= 415751 && runnumber <= 416982 )
   {
     species = "heau";
     energyflag = 200;
+    beam_x = -0.16;
+    beam_y = 0.06;
+    beam_angle = -0.001;
   }
   // --- Run15pAu200
   if ( runnumber >= 432637 && runnumber <= 436647 )
   {
     species = "pau";
     energyflag = 200;
+    // --- numbers from CAD
+    // beam_x = 0.20;
+    // beam_y = 0.06;
+    // beam_angle = -0.003;
+    // --- rotation already done in Darren's trees?  need to check...
+    beam_x = 0.0;
+    beam_y = 0.0;
+    beam_angle = 0.0;
   }
   // --- Run16dAu200
   if ( runnumber >= 454774 && runnumber <= 455639 )
