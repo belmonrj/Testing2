@@ -390,6 +390,12 @@ void flatten(int runnumber, int passnumber)
       Float_t bbc_qn = ktree->bbc_qn;
       Float_t bbc_qs = ktree->bbc_qs;
 
+      float fracCut = 0.95; // pile up rejection < fracCut (better place??)
+      // float fracCut = 0.98; // pile up rejection < fracCut (better place??)
+      if ( energyflag == 200 && centrality <= 20 && frac < fracCut )
+        continue;
+
+
       if ( centrality < 0 || centrality > 99 ) continue;
       int icent = 0;
       if ( centrality <= 5 ) icent = 0;
