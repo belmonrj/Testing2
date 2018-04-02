@@ -95,7 +95,21 @@ void flatten(int runnumber, int passnumber)
     // beam_x = 0.20;
     // beam_y = 0.06;
     // beam_angle = -0.003;
-    // --- rotation already done in Darren's trees?  need to check...
+    // --- rotation already done in Darren's trees?  dau bes utils still available?
+    beam_x = 0.0;
+    beam_y = 0.0;
+    beam_angle = 0.0;
+  }
+  // --- Run15pAl200
+  if ( runnumber >= 436759 && runnumber <= 438422 )
+  {
+    species = "pal";
+    energyflag = 200;
+    // --- numbers from CAD
+    // beam_x = 0.21;
+    // beam_y = 0.06;
+    // beam_angle = -0.002;
+    // --- rotation dau bes utils still available?
     beam_x = 0.0;
     beam_y = 0.0;
     beam_angle = 0.0;
@@ -370,11 +384,17 @@ void flatten(int runnumber, int passnumber)
       // --- get and cut on the triggers
       UInt_t  trigger_scaled = ktree->trigger_scaled;
       UInt_t  trigger_live = ktree->trigger_live;
+      // --- Run14HeAu200
       // unsigned int trigger_narrow       = 0x00000002;
       // unsigned int trigger_narrowcent48 = 0x00000004;
       // unsigned int trigger_narrowcent49 = 0x00000008;
       // unsigned int passes_trigger = trigger_scaled & trigger_narrowcent48; // subject to change
       // if ( passes_trigger == 0 ) continue;
+      // --- Run15pAu200 and Run15pAl200
+      unsigned int trigger_narrow       = 0x00000010;
+      unsigned int trigger_narrowcent35 = 0x00000008;
+      unsigned int passes_trigger = trigger_scaled & trigger_narrowcent35; // subject to change
+      if ( passes_trigger == 0 ) continue;
       // --- get some event variables
       Float_t event = ktree->event;
       Float_t bbc_z = ktree->bbc_z;
