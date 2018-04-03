@@ -92,13 +92,13 @@ void flatten(int runnumber, int passnumber)
     species = "pau";
     energyflag = 200;
     // --- numbers from CAD
-    // beam_x = 0.20;
-    // beam_y = 0.06;
-    // beam_angle = -0.003;
+    beam_x = 0.20;
+    beam_y = 0.06;
+    beam_angle = -0.003;
     // --- rotation already done in Darren's trees?  dau bes utils still available?
-    beam_x = 0.0;
-    beam_y = 0.0;
-    beam_angle = 0.0;
+    // beam_x = 0.0;
+    // beam_y = 0.0;
+    // beam_angle = 0.0;
   }
   // --- Run15pAl200
   if ( runnumber >= 436759 && runnumber <= 438422 )
@@ -451,10 +451,10 @@ void flatten(int runnumber, int passnumber)
           float bbc_y      = d_pmt_y[i] - vtx_y * 10;
           float bbc_z      = d_pmt_z    - vtx_z * 10;
           // --- beam offsets (subtract offsets to get to 0,0)
-          bbc_x -= beam_x;
-          bbc_y -= beam_y;
+          // bbc_x -= beam_x;
+          // bbc_y -= beam_y;
           // --- beam angle (beam has angle, rotate by -angle to get back to 0)
-          bbc_x = bbc_z * sin(-beam_angle) + bbc_x * cos(-beam_angle);
+          // bbc_x = bbc_z * sin(-beam_angle) + bbc_x * cos(-beam_angle);
           // --- calculate the phi with the offset and rotated coordinates
           float phi = atan2(bbc_y,bbc_x);
           for ( int ih = 1; ih < NHAR; ++ih )
