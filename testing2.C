@@ -106,13 +106,13 @@ void flatten(int runnumber, int passnumber)
     species = "pal";
     energyflag = 200;
     // --- numbers from CAD
-    // beam_x = 0.21;
-    // beam_y = 0.06;
-    // beam_angle = -0.002;
+    beam_x = 0.21;
+    beam_y = 0.06;
+    beam_angle = -0.002;
     // --- rotation dau bes utils still available?
-    beam_x = 0.0;
-    beam_y = 0.0;
-    beam_angle = 0.0;
+    // beam_x = 0.0;
+    // beam_y = 0.0;
+    // beam_angle = 0.0;
   }
   // --- Run16dAu200
   if ( runnumber >= 454774 && runnumber <= 455639 )
