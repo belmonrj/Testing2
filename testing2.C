@@ -92,13 +92,13 @@ void flatten(int runnumber, int passnumber)
     species = "pau";
     energyflag = 200;
     // --- numbers from CAD
-    beam_x = 0.20;
-    beam_y = 0.06;
-    beam_angle = -0.003;
+    // beam_x = 0.20;
+    // beam_y = 0.06;
+    // beam_angle = -0.003;
     // --- rotation already done in Darren's trees?  dau bes utils still available?
-    // beam_x = 0.0;
-    // beam_y = 0.0;
-    // beam_angle = 0.0;
+    beam_x = 0.0;
+    beam_y = 0.0;
+    beam_angle = 0.0;
   }
   // --- Run15pAl200
   if ( runnumber >= 436759 && runnumber <= 438422 )
