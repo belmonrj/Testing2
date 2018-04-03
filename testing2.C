@@ -82,9 +82,14 @@ void flatten(int runnumber, int passnumber)
   {
     species = "heau";
     energyflag = 200;
-    beam_x = -0.16;
-    beam_y = 0.06;
-    beam_angle = -0.001;
+    // --- numbers from Darren and Sanghoon, need to be double checked (surprising that x is negative)
+    // beam_x = -0.16;
+    // beam_y = 0.06;
+    // beam_angle = -0.001;
+    // --- try 0
+    beam_x = 0.0;
+    beam_y = 0.0;
+    beam_angle = 0.0;
   }
   // --- Run15pAu200
   if ( runnumber >= 432637 && runnumber <= 436647 )
@@ -723,7 +728,7 @@ void flatten(int runnumber, int passnumber)
           arhphi_cnt->Fill(phi);
           // --- all tracking cuts are made in the tree code, so move on to analysis
           // --- loop over harmonics to do EP ana
-          if ( pt < 0.2 || pt > 3.0 ) continue;
+          if ( pt < 0.2 || pt > 3.0 ) continue; // change to 5?
           double pc3cut = 2.0; // 3.0 is on the trees
           if ( fabs(pc3sdz) > pc3cut || fabs(pc3sdphi) > pc3cut ) continue;
           int dcarm = 0;
