@@ -729,7 +729,7 @@ void flatten(int runnumber, int passnumber)
           // --- all tracking cuts are made in the tree code, so move on to analysis
           // --- loop over harmonics to do EP ana
           if ( pt < 0.2 || pt > 3.0 ) continue; // change to 5?
-          double pc3cut = 2.0; // 3.0 is on the trees
+          double pc3cut = 3.0; // 3.0 is on the trees
           if ( fabs(pc3sdz) > pc3cut || fabs(pc3sdphi) > pc3cut ) continue;
           int dcarm = 0;
           if (px > 0) dcarm = 1;
