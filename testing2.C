@@ -341,6 +341,14 @@ void flatten(int runnumber, int passnumber)
   TH1D* brhphi_cnt = new TH1D("brhphi_cnt","",64,-3.2,3.2);
   TH1D* brhphi_fvtx = new TH1D("brhphi_fvtx","",64,-3.2,3.2);
 
+  //if ( runnumber >= 415751 && runnumber <= 416982 )
+  TProfile* tp1f_dcax_run = new TProfile("tp1f_dcax_run","",4000,415000.5,419000.5);
+  TProfile* tp1f_dcay_run = new TProfile("tp1f_dcay_run","",4000,415000.5,419000.5);
+  TProfile* tp1f_nhit_run = new TProfile("tp1f_nhit_run","",4000,415000.5,419000.5);
+  TProfile* tp1f_chi2_run = new TProfile("tp1f_chi2_run","",4000,415000.5,419000.5);
+  TProfile* tp1f_nfvt_run = new TProfile("tp1f_nfvt_run","",4000,415000.5,419000.5);
+  TProfile* tp1f_ntrk_run = new TProfile("tp1f_ntrk_run","",4000,415000.5,419000.5);
+
   TH1D* hbbcs_psin_raw[NHAR] = {NULL};
   TH1D* hbbcs_psin_recenter[NHAR] = {NULL};
   TH1D* hbbcs_psin_docalib[NHAR] = {NULL};
@@ -390,15 +398,19 @@ void flatten(int runnumber, int passnumber)
       UInt_t  trigger_scaled = ktree->trigger_scaled;
       UInt_t  trigger_live = ktree->trigger_live;
       // --- Run14HeAu200
-      // unsigned int trigger_narrow       = 0x00000002;
-      // unsigned int trigger_narrowcent48 = 0x00000004;
-      // unsigned int trigger_narrowcent49 = 0x00000008;
-      // unsigned int passes_trigger = trigger_scaled & trigger_narrowcent48; // subject to change
-      // if ( passes_trigger == 0 ) continue;
+      unsigned int trigger_narrowR14    = 0x00000002;
+      unsigned int trigger_narrowcent48 = 0x00000004;
+      unsigned int trigger_narrowcent49 = 0x00000008;
+      unsigned int passes_triggerR14    = trigger_scaled & trigger_narrowcent48; // subject to change
       // --- Run15pAu200 and Run15pAl200
-      unsigned int trigger_narrow       = 0x00000010;
+      unsigned int trigger_narrowR15    = 0x00000010;
       unsigned int trigger_narrowcent35 = 0x00000008;
-      unsigned int passes_trigger = trigger_scaled & trigger_narrowcent35; // subject to change
+      unsigned int passes_triggerR15    = trigger_scaled & trigger_narrowcent35; // subject to change
+      // --- run selection
+      unsigned int passes_trigger = 0;
+      if ( runnumber >= 415751 && runnumber <= 416928 ) passes_trigger = passes_triggerR14;
+      if ( runnumber >= 432637 && runnumber <= 436647 ) passes_trigger = passes_triggerR15;
+      if ( runnumber >= 436759 && runnumber <= 438422 ) passes_trigger = passes_triggerR15;
       if ( passes_trigger == 0 ) continue;
       // --- get some event variables
       Float_t event = ktree->event;
@@ -645,6 +657,10 @@ void flatten(int runnumber, int passnumber)
           heta_fvtx->Fill(eta);
           hphi->Fill(phi);
           hphi_fvtx->Fill(phi);
+          tp1f_dcax_run->Fill(runnumber,dcax);
+          tp1f_dcay_run->Fill(runnumber,dcay);
+          tp1f_nhit_run->Fill(runnumber,nhits);
+          tp1f_chi2_run->Fill(runnumber,chi2ndf);
           // --- make some tracking cuts (will be made in trees next time)
           if ( chi2ndf < 0 || chi2ndf > 5 ) continue;
           if ( fabs(dcax) > 2 || fabs(dcay) > 2 ) continue;
@@ -749,6 +765,9 @@ void flatten(int runnumber, int passnumber)
                 }
             }
         } // end loop over central arm tracks
+
+      tp1f_nfvt_run->Fill(runnumber,nfvtxt);
+      tp1f_ntrk_run->Fill(runnumber,ntrk);
 
     } // end loop over events
 
