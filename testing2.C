@@ -648,7 +648,7 @@ void flatten(int runnumber, int passnumber)
           // --- make some tracking cuts (will be made in trees next time)
           if ( chi2ndf < 0 || chi2ndf > 5 ) continue;
           if ( fabs(dcax) > 2 || fabs(dcay) > 2 ) continue;
-          if ( nhits < 3 ) continue;
+          if ( nhits < 4 ) continue;
           // --- fill some diagnostic histos after cuts
           brheta->Fill(eta);
           brheta_fvtx->Fill(eta);
