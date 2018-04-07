@@ -119,7 +119,7 @@ void simple_plot()
   tge_sys->Draw("2");
 
   latt.DrawLatex(0.30, 0.87, "PHENIX");
-  latt.DrawLatex(0.56, 0.87, "p+Au #sqrt{s_{_{NN}}} = 200 GeV");
+  latt.DrawLatex(0.56, 0.87, "^{3}He+Au #sqrt{s_{_{NN}}} = 200 GeV");
   latt.DrawLatex(0.56, 0.80, "EP: -3.9 < #eta < -3.1");
 
   c1->Print("Figures/v2eta_final_heau200.png");
