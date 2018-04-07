@@ -20,7 +20,7 @@ void check_v2pT_plot()
   hdummy->Draw();
   hdummy->GetYaxis()->SetTitle("v_{2}");
   hdummy->GetYaxis()->SetTitleOffset(1.5);
-  hdummy->GetXaxis()->SetTitle("p_{T}");
+  hdummy->GetXaxis()->SetTitle("p_{T} (GeV/c)");
   TProfile* tp1f_v2pt_z[nzbins];
   for ( int i = 0; i < nzbins; ++i )
     {
@@ -66,7 +66,7 @@ void check_v2pT_plot()
   hdummy->Draw();
   hdummy->GetYaxis()->SetTitle("v_{2}");
   hdummy->GetYaxis()->SetTitleOffset(1.2);
-  hdummy->GetXaxis()->SetTitle("p_{T}");
+  hdummy->GetXaxis()->SetTitle("p_{T} (GeV/c)");
   th1d_v2pt->SetMarkerStyle(kFullCircle);
   th1d_v2pt->SetMarkerColor(kBlack);
   th1d_v2pt->Draw("same ex0p");
@@ -75,12 +75,42 @@ void check_v2pT_plot()
   latt.SetNDC();
   latt.SetTextSize(0.05);
   latt.SetTextAlign(11);
-  latt.DrawLatex(0.30, 0.87, "PHENIX");
-  latt.DrawLatex(0.56, 0.87, "^{3}He+Au #sqrt{s_{_{NN}}} = 200 GeV");
-  latt.DrawLatex(0.56, 0.80, "EP: -3.9 < #eta < -3.1");
+  latt.DrawLatex(0.70, 0.87, "PHENIX");
+  latt.DrawLatex(0.20, 0.87, "^{3}He+Au #sqrt{s_{_{NN}}} = 200 GeV");
+  latt.DrawLatex(0.20, 0.80, "EP: -3.9 < #eta < -3.1");
 
   c1->Print("Figures/v2pt_corr_heau200.png");
   c1->Print("Figures/v2pt_corr_heau200.pdf");
+
+  double ppg_pt[13], ppg_v2[13], ppg_ev2[13];
+  ppg_pt[0]  = 0.5; ppg_v2[0]  = 0.0470305; ppg_ev2[0]  = 0.000224955;
+  ppg_pt[1]  = 0.7; ppg_v2[1]  = 0.0676329; ppg_ev2[1]  = 0.000275153;
+  ppg_pt[2]  = 0.9; ppg_v2[2]  = 0.0855794; ppg_ev2[2]  = 0.000344484;
+  ppg_pt[3]  = 1.1; ppg_v2[3]  = 0.100207 ; ppg_ev2[3]  = 0.000435968;
+  ppg_pt[4]  = 1.3; ppg_v2[4]  = 0.113227 ; ppg_ev2[4]  = 0.000551087;
+  ppg_pt[5]  = 1.5; ppg_v2[5]  = 0.123626 ; ppg_ev2[5]  = 0.000696455;
+  ppg_pt[6]  = 1.7; ppg_v2[6]  = 0.134796 ; ppg_ev2[6]  = 0.000876662;
+  ppg_pt[7]  = 1.9; ppg_v2[7]  = 0.139424 ; ppg_ev2[7]  = 0.00110149 ;
+  ppg_pt[8]  = 2.1; ppg_v2[8]  = 0.147901 ; ppg_ev2[8]  = 0.00137325 ;
+  ppg_pt[9]  = 2.3; ppg_v2[9]  = 0.146528 ; ppg_ev2[9]  = 0.00170845 ;
+  ppg_pt[10] = 2.5; ppg_v2[10] = 0.153808 ; ppg_ev2[10] = 0.00211334 ;
+  ppg_pt[11] = 2.7; ppg_v2[11] = 0.152377 ; ppg_ev2[11] = 0.00258993 ;
+  ppg_pt[12] = 2.9; ppg_v2[12] = 0.158693 ; ppg_ev2[12] = 0.00315742 ;
+
+  TGraphErrors* tge_ppg = new TGraphErrors(13,ppg_pt,ppg_v2,0,ppg_ev2);
+  tge_ppg->SetMarkerColor(kBlue);
+  tge_ppg->SetMarkerStyle(kFullDiamond);
+  tge_ppg->SetMarkerSize(2.5);
+  tge_ppg->Draw("p");
+
+  TLegend* leg = new TLegend(0.6,0.2,0.8,0.4);
+  leg->AddEntry(th1d_v2pt,"this ana","p");
+  leg->AddEntry(tge_ppg,"PPG181","p");
+  leg->SetTextSize(0.05);
+  leg->Draw();
+
+  c1->Print("Figures/v2pt_komp_heau200.png");
+  c1->Print("Figures/v2pt_komp_heau200.pdf");
 
 }
 
@@ -116,3 +146,5 @@ TGraphErrors* get_systematics(TH1D* h, const double sys)
   TGraphErrors* tge = new TGraphErrors(size,x,y,ex,ey);
   return tge;
 }
+
+
