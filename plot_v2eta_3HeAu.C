@@ -3,7 +3,7 @@ void clean_histo(TH1D*);
 TGraphErrors* get_systematics(TH1D*);
 TGraphErrors* get_systematics(TH1D*, const double);
 
-void simple_plot()
+void plot_v2eta_3HeAu()
 {
 
   const int nzbins = 10;
