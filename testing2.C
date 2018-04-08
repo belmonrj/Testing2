@@ -22,6 +22,7 @@
 #include <TProfile.h>
 #include <TTree.h>
 #include <TString.h>
+#include <TCutG.h>
 //#endif
 
 // global pmt variables
@@ -40,6 +41,7 @@ using namespace std;
 void initialize_pmt_position();
 // int get_pmt_layer(int);
 void flatten(int, int);
+bool PassFVTXEtaZvrtxCut(double, double);
 
 
 int main(int argc, char *argv[])
@@ -668,6 +670,8 @@ void flatten(int runnumber, int passnumber)
           //if ( nhits < 4 ) continue;
           if ( nhitx < 3 ) continue;
           if ( nhitx != nhits ) continue; // require exactly 0 VTX hits
+          bool passes_fiducial = PassFVTXEtaZvrtxCut(eta,fvtx_z); // should check which z-vertex
+          if ( !passes_fiducial ) continue;
           // --- fill some diagnostic histos after cuts
           brheta->Fill(eta);
           brheta_fvtx->Fill(eta);
@@ -961,3 +965,60 @@ void initialize_pmt_position()
   d_pmt_y[63] = -14.2;
 
 }
+
+
+bool PassFVTXEtaZvrtxCut(double eta, double zvrtx)
+{
+  static TCutG* fvtx_cut_n;
+  static TCutG* fvtx_cut_s;
+  if ( !fvtx_cut_s || !fvtx_cut_n)
+  {
+    // --- North arm
+    double zn[] =
+    {
+      -34.6318, -32.1769, -28.8452, -25.5135, -20.8667,
+      -17.009, -12.3622, -7.62776, -3.15631, 1.57816,
+      4.73447, 8.06613, 9.99499, 3.94539, 0,
+      -4.73447, -9.20591, -12.4499, -15.2555, -18.6748,
+      -22.3572, -26.3903, -30.0726, -34.4564, -34.5441,
+      -34.6318,
+    };
+    double en[] =
+    {
+      3.14194, 3.11613, 3.05161, 2.97419, 2.87097,
+      2.79355, 2.66452, 2.49677, 2.31613, 2.09677,
+      1.90323, 1.68387, 1.54194, 1.54194, 1.67097,
+      1.7871, 1.94194, 2.03226, 2.10968, 2.2,
+      2.27742, 2.38065, 2.43226, 2.50968, 3.15484,
+      3.14194,
+    };
+    fvtx_cut_n = new TCutG("fvtx_cut_n", 26, zn, en);
+
+    // --- South arm
+    double zs[] =
+    {
+      34.7194, 29.985, 25.1628, 19.99, 15.6062,
+      9.64429, 5.17285, 1.22745, -2.63026, -5.3482,
+      -7.71543, -9.11824, -10.8717, -6.83868, -3.06864,
+      0.438377, 5.6989, 10.521, 15.7816, 20.4284,
+      25.3382, 30.248, 34.5441, 34.6318, 34.7194,
+    };
+    double es[] =
+    {
+      -3.12903, -3.03871, -2.94839, -2.81935, -2.71613,
+      -2.54839, -2.40645, -2.25161, -2.04516, -1.90323,
+      -1.72258, -1.60645, -1.46452, -1.49032, -1.55484,
+      -1.65806, -1.8, -1.98065, -2.13548, -2.25161,
+      -2.34194, -2.41935, -2.48387, -3.11613, -3.12903,
+    };
+    fvtx_cut_s = new TCutG("fvtx_cut_s", 25, zs, es);
+  }
+
+  if ( eta < 0 )
+    return fvtx_cut_s->IsInside(zvrtx, eta);
+  else
+    return fvtx_cut_n->IsInside(zvrtx, eta);
+
+  return false;
+}
+
