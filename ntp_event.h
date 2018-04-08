@@ -1,8 +1,8 @@
 //////////////////////////////////////////////////////////
 // This class has been automatically generated on
-// Mon Mar 19 22:14:09 2018 by ROOT version 5.30/03
+// Sun Apr  8 12:35:45 2018 by ROOT version 5.30/03
 // from TTree ntp_event/event-wise ntuple
-// found on file: input_heau/415751_0.root
+// found on file: input_heau200/415751_0.root
 //////////////////////////////////////////////////////////
 
 #ifndef ntp_event_h
@@ -33,7 +33,7 @@ public :
    Float_t         frac;
    Float_t         bbc_qn;
    Float_t         bbc_qs;
-   Float_t         d_BBC_charge[128];
+   Float_t         d_BBC_charge[64];
    Int_t           d_ntrk;
    Float_t         d_cntpx[13];   //[d_ntrk]
    Float_t         d_cntpy[13];   //[d_ntrk]
@@ -48,6 +48,7 @@ public :
    Float_t         fchisq[400];   //[ntracklets]
    Int_t           farm[400];   //[ntracklets]
    Int_t           fnhits[400];   //[ntracklets]
+   Int_t           fnhitx[400];   //[ntracklets]
    Float_t         fDCA_X[400];   //[ntracklets]
    Float_t         fDCA_Y[400];   //[ntracklets]
 
@@ -82,6 +83,7 @@ public :
    TBranch        *b_fchisq;   //!
    TBranch        *b_farm;   //!
    TBranch        *b_fnhits;   //!
+   TBranch        *b_fnhitx;   //!
    TBranch        *b_fDCA_X;   //!
    TBranch        *b_fDCA_Y;   //!
 
@@ -104,9 +106,9 @@ ntp_event::ntp_event(TTree *tree)
 // if parameter tree is not specified (or zero), connect the file
 // used to generate this class and read the Tree.
    if (tree == 0) {
-      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("input_heau/415751_0.root");
+      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("input_heau200/415751_0.root");
       if (!f || !f->IsOpen()) {
-         f = new TFile("input_heau/415751_0.root");
+         f = new TFile("input_heau200/415751_0.root");
       }
       f->GetObject("ntp_event",tree);
 
@@ -185,6 +187,7 @@ void ntp_event::Init(TTree *tree)
    fChain->SetBranchAddress("fchisq", fchisq, &b_fchisq);
    fChain->SetBranchAddress("farm", farm, &b_farm);
    fChain->SetBranchAddress("fnhits", fnhits, &b_fnhits);
+   fChain->SetBranchAddress("fnhitx", fnhitx, &b_fnhitx);
    fChain->SetBranchAddress("fDCA_X", fDCA_X, &b_fDCA_X);
    fChain->SetBranchAddress("fDCA_Y", fDCA_Y, &b_fDCA_Y);
    Notify();
