@@ -646,6 +646,7 @@ void flatten(int runnumber, int passnumber)
           float chi2ndf = ktree->fchisq[i];
           int arm = ktree->farm[i];
           int nhits = ktree->fnhits[i];
+          int nhitx = ktree->fnhitx[i];
           float dcax = ktree->fDCA_X[i];
           float dcay = ktree->fDCA_Y[i];
           // --- fill some diagnostic histograms
@@ -664,7 +665,8 @@ void flatten(int runnumber, int passnumber)
           // --- make some tracking cuts (will be made in trees next time)
           if ( chi2ndf < 0 || chi2ndf > 5 ) continue;
           if ( fabs(dcax) > 2 || fabs(dcay) > 2 ) continue;
-          if ( nhits < 4 ) continue;
+          //if ( nhits < 4 ) continue;
+          if ( nhitx < 4 ) continue;
           // --- fill some diagnostic histos after cuts
           brheta->Fill(eta);
           brheta_fvtx->Fill(eta);
