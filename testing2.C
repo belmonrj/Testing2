@@ -667,6 +667,7 @@ void flatten(int runnumber, int passnumber)
           if ( fabs(dcax) > 2 || fabs(dcay) > 2 ) continue;
           //if ( nhits < 4 ) continue;
           if ( nhitx < 4 ) continue;
+          if ( nhitx != nhits ) continue; // require exactly 0 VTX hits
           // --- fill some diagnostic histos after cuts
           brheta->Fill(eta);
           brheta_fvtx->Fill(eta);
