@@ -669,7 +669,7 @@ void flatten(int runnumber, int passnumber)
           if ( fabs(dcax) > 2 || fabs(dcay) > 2 ) continue;
           //if ( nhits < 4 ) continue;
           if ( nhitx < 3 ) continue;
-          if ( nhitx != nhits ) continue; // require exactly 0 VTX hits
+          //if ( nhitx != nhits ) continue; // require exactly 0 VTX hits
           bool passes_fiducial = PassFVTXEtaZvrtxCut(eta,fvtx_z); // should check which z-vertex
           if ( !passes_fiducial ) continue;
           // --- fill some diagnostic histos after cuts
