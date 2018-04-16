@@ -88,10 +88,14 @@ void flatten(int runnumber, int passnumber)
     // beam_x = -0.16;
     // beam_y = 0.06;
     // beam_angle = -0.001;
+    // --- numbers from Darren and Sanghoon, updated pro build
+    beam_x = 0.3806;
+    beam_y = 0.0131;
+    beam_angle = 0.0018; // positive angle?
     // --- try 0
-    beam_x = 0.0;
-    beam_y = 0.0;
-    beam_angle = 0.0;
+    // beam_x = 0.0;
+    // beam_y = 0.0;
+    // beam_angle = 0.0;
   }
   // --- Run15pAu200
   if ( runnumber >= 432637 && runnumber <= 436647 )
@@ -670,8 +674,8 @@ void flatten(int runnumber, int passnumber)
           //if ( nhits < 4 ) continue;
           if ( nhitx < 3 ) continue;
           //if ( nhitx != nhits ) continue; // require exactly 0 VTX hits
-          bool passes_fiducial = PassFVTXEtaZvrtxCut(eta,fvtx_z); // should check which z-vertex
-          if ( !passes_fiducial ) continue;
+          // bool passes_fiducial = PassFVTXEtaZvrtxCut(eta,fvtx_z); // should check which z-vertex
+          // if ( !passes_fiducial ) continue;
           // --- fill some diagnostic histos after cuts
           brheta->Fill(eta);
           brheta_fvtx->Fill(eta);
