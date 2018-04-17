@@ -671,8 +671,8 @@ void flatten(int runnumber, int passnumber)
           // --- make some tracking cuts (will be made in trees next time)
           if ( chi2ndf < 0 || chi2ndf > 5 ) continue;
           if ( fabs(dcax) > 2 || fabs(dcay) > 2 ) continue;
-          //if ( nhits < 4 ) continue;
-          if ( nhitx < 3 ) continue;
+          if ( nhits < 3 ) continue;
+          //if ( nhitx < 3 ) continue;
           //if ( nhitx != nhits ) continue; // require exactly 0 VTX hits
           // bool passes_fiducial = PassFVTXEtaZvrtxCut(eta,fvtx_z); // should check which z-vertex
           // if ( !passes_fiducial ) continue;
