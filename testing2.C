@@ -474,10 +474,10 @@ void flatten(int runnumber, int passnumber)
           float bbc_y      = d_pmt_y[i] - vtx_y * 10;
           float bbc_z      = d_pmt_z    - vtx_z * 10;
           // --- beam offsets (subtract offsets to get to 0,0)
-          // bbc_x -= beam_x*10;
-          // bbc_y -= beam_y*10;
+          bbc_x -= beam_x*10;
+          bbc_y -= beam_y*10;
           // --- beam angle (beam has angle, rotate by -angle to get back to 0)
-          //bbc_x = bbc_z * sin(-beam_angle) + bbc_x * cos(-beam_angle);
+          // bbc_x = bbc_z * sin(-beam_angle) + bbc_x * cos(-beam_angle);
           // --- calculate the phi with the offset and rotated coordinates
           float phi = atan2(bbc_y,bbc_x);
           for ( int ih = 1; ih < NHAR; ++ih )
