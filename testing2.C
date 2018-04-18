@@ -466,6 +466,7 @@ void flatten(int runnumber, int passnumber)
       float bbc_qw = 0;
       float vtx_x = 0; // temp
       float vtx_y = 0; // temp
+      vtx_z = bbc_z; // temp but very important...
       for ( int i = 0; i < ntubes; ++i )
         {
           float bbc_charge = ktree->d_BBC_charge[i]; // there was a very stupid bug here...
@@ -477,7 +478,7 @@ void flatten(int runnumber, int passnumber)
           bbc_x -= beam_x*10;
           bbc_y -= beam_y*10;
           // --- beam angle (beam has angle, rotate by -angle to get back to 0)
-          // bbc_x = bbc_z * sin(-beam_angle) + bbc_x * cos(-beam_angle);
+          bbc_x = bbc_z * sin(-beam_angle) + bbc_x * cos(-beam_angle);
           // --- calculate the phi with the offset and rotated coordinates
           float phi = atan2(bbc_y,bbc_x);
           for ( int ih = 1; ih < NHAR; ++ih )
