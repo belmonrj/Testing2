@@ -12,8 +12,8 @@ void plot_v2eta_3HeAu()
   TCanvas* c1 = new TCanvas("c1","");
 
 
-  //TFile* infile = TFile::Open("heau200_all.root");
-  TFile* infile = TFile::Open("heau200_testprod.root");
+  TFile* infile = TFile::Open("heau200_all.root");
+  //TFile* infile = TFile::Open("heau200_testprod.root");
 
 
   // ---------------------------------
