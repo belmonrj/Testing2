@@ -112,6 +112,33 @@ void check_v2pT_plot()
   c1->Print("Figures/v2pt_komp_heau200.png");
   c1->Print("Figures/v2pt_komp_heau200.pdf");
 
+  //tge_ppg->Fit("pol4","","",0,3);
+  tge_ppg->Fit("pol2","","",0,3);
+
+  c1->Print("Figures/v2pt_fkomp_heau200.png");
+  c1->Print("Figures/v2pt_fkomp_heau200.pdf");
+
+  TF1* fun = tge_ppg->GetFunction("pol2");
+  cout << fun << endl;
+
+  ymin = 0.8;
+  ymax = 1.2;
+  if ( hdummy ) delete hdummy;
+  hdummy = new TH2D("hdummy","",1,xmin,xmax,1,ymin,ymax);
+  hdummy->Draw();
+  hdummy->GetYaxis()->SetTitle("v_{2} ratio: (this ana)/(PPG181)");
+  hdummy->GetYaxis()->SetTitleOffset(1.2);
+  hdummy->GetXaxis()->SetTitle("p_{T} (GeV/c)");
+  th1d_v2pt->Divide(fun,1);
+  th1d_v2pt->Draw("same ex0p");
+  TLine* line = new TLine(xmin,1,xmax,1);
+  line->SetLineWidth(2);
+  line->SetLineStyle(2);
+  line->Draw();
+
+  c1->Print("Figures/v2pt_rfkomp_heau200.png");
+  c1->Print("Figures/v2pt_rfkomp_heau200.pdf");
+
 }
 
 TGraphErrors* get_systematics(TH1D* h)
