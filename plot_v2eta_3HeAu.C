@@ -1,5 +1,7 @@
 void clean_histo(TH1D*);
 
+TH1D* fixnbins(TH1D*);
+
 TGraphErrors* get_systematics(TH1D*);
 TGraphErrors* get_systematics(TH1D*, const double);
 
@@ -11,6 +13,7 @@ void plot_v2eta_3HeAu()
 
 
   TFile* infile = TFile::Open("heau200_all.root");
+  //TFile* infile = TFile::Open("heau200_testprod.root");
 
 
   // ---------------------------------
@@ -107,8 +110,9 @@ void plot_v2eta_3HeAu()
   // -------------------------------------------------------------
   // --- now make the final plot with the eta dependent correction
 
-  TFile* corrfile = TFile::Open("ampt_vneta_correction.root");
-  TH1D* v2eta_corr = (TH1D*)corrfile->Get("v2eta_correction_dAu200"); // need one for heau200, but this should be pretty close
+  TFile* corrfile = TFile::Open("vneta_corr.root"); // new file
+  TH1D* v2eta_corr_x = (TH1D*)corrfile->Get("ampt_vneta_corr_heau200_b2_c0"); // new result from Darren
+  TH1D* v2eta_corr = fixnbins(v2eta_corr_x);
   th1d_v2eta->Divide(v2eta_corr);
   if ( tge_sys ) delete tge_sys;
   tge_sys = get_systematics(th1d_v2eta);
@@ -180,3 +184,20 @@ TGraphErrors* get_systematics(TH1D* h, const double sys)
   TGraphErrors* tge = new TGraphErrors(size,x,y,ex,ey);
   return tge;
 }
+
+TH1D* fixnbins(TH1D* h)
+{
+  TH1D* hreturn = new TH1D("hreturn","",32,-3.2,3.2);
+  for ( int i = 0; i < 32; ++i )
+    {
+      double eta2 = hreturn->GetBinCenter(i+1);
+      double eta1 = h->GetBinCenter(i+5);
+      cout << eta1 << " " << eta2 << endl;
+      double content1 = h->GetBinContent(i+5);
+      double error1 = h->GetBinError(i+5);
+      hreturn->SetBinContent(i+1,content1);
+      hreturn->SetBinError(i+1,error1);
+    }
+  return hreturn;
+}
+
