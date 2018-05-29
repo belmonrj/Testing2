@@ -91,7 +91,8 @@ void flatten(int runnumber, int passnumber)
     // --- numbers from Darren and Sanghoon, updated pro build
     beam_x = 0.3806;
     beam_y = 0.0131;
-    beam_angle = 0.0018; // positive angle?
+    //beam_angle = 0.0018; // positive angle?
+    beam_angle = 0.0; // testing to compare to Shengli
     // --- try 0
     // beam_x = 0.0;
     // beam_y = 0.0;
