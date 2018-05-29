@@ -8,6 +8,7 @@ void check_v2pT_plot()
   TCanvas* c1 = new TCanvas("c1","");
 
   TFile* infile = TFile::Open("heau200_all.root");
+  //TFile* infile = TFile::Open("heau200_all_NOROT.root");
 
   // ---------------------------------
   // --- compare all the z-vertex bins
