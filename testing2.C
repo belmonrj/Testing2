@@ -89,12 +89,9 @@ void flatten(int runnumber, int passnumber)
     // beam_y = 0.06;
     // beam_angle = -0.001;
     // --- numbers from Darren and Sanghoon, updated pro build
-    //beam_x = 0.3806;
-    //beam_y = 0.0131;
-    //beam_angle = 0.0018; // positive angle?
-    beam_x = 0.0;
-    beam_y = 0.0;
-    beam_angle = 0.0; // testing to compare to Shengli
+    beam_x = 0.3806;
+    beam_y = 0.0131;
+    beam_angle = 0.0018; // positive angle?
     // --- try 0
     // beam_x = 0.0;
     // beam_y = 0.0;
@@ -743,9 +740,9 @@ void flatten(int runnumber, int passnumber)
           float pxo = px;
           float pyo = py;
           float pzo = pz;
-          px = pzo*sin(-beam_angle) + pxo*cos(-beam_angle);
-          py = pyo;
-          pz = -pxo*sin(-beam_angle) + pzo*cos(-beam_angle);
+          // px = pzo*sin(-beam_angle) + pxo*cos(-beam_angle);
+          // py = pyo;
+          // pz = -pxo*sin(-beam_angle) + pzo*cos(-beam_angle);
           // --- redefine angles with new rotations
           phi = atan2(py, px);
           the = acos(pz/p);
