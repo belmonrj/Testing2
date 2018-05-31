@@ -740,9 +740,9 @@ void flatten(int runnumber, int passnumber)
           float pxo = px;
           float pyo = py;
           float pzo = pz;
-          // px = pzo*sin(-beam_angle) + pxo*cos(-beam_angle);
-          // py = pyo;
-          // pz = -pxo*sin(-beam_angle) + pzo*cos(-beam_angle);
+          px = pzo*sin(-beam_angle) + pxo*cos(-beam_angle);
+          py = pyo;
+          pz = -pxo*sin(-beam_angle) + pzo*cos(-beam_angle);
           // --- redefine angles with new rotations
           phi = atan2(py, px);
           the = acos(pz/p);
