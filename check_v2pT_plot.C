@@ -98,6 +98,41 @@ void check_v2pT_plot()
   ppg_pt[11] = 2.7; ppg_v2[11] = 0.152377 ; ppg_ev2[11] = 0.00258993 ;
   ppg_pt[12] = 2.9; ppg_v2[12] = 0.158693 ; ppg_ev2[12] = 0.00315742 ;
 
+  double integral_shengli = 0;
+  double integral_weight = 0;
+  for ( int i = 0; i < 13; ++i )
+    {
+      double v2 = ppg_v2[i];
+      double w = 1.0/ppg_ev2[i];
+      w *= w;
+      integral_shengli += w*v2;
+      integral_weight += w;
+    }
+  integral_shengli /= integral_weight;
+  cout << integral_shengli << endl;
+
+  TH1D* helper = (TH1D*)th1d_v2pt->Clone("helper");
+  helper->Rebin(2);
+  helper->Scale(0.5);
+  int nbins = helper->GetNbinsX();
+  double integral_thisana = 0;
+  double integral_thisweight = 0;
+  for ( int i = 0; i < nbins; ++i )
+    {
+      double pt = helper->GetBinCenter(i+1);
+      if ( pt < 0.4 ) continue;
+      double v2 = helper->GetBinContent(i+1);
+      double w = 1.0/helper->GetBinError(i+1);
+      if ( w > 0 && v2 > 0 ) w *= w;
+      else w = 0;
+      integral_thisana += w*v2;
+      integral_thisweight += w;
+    }
+  integral_thisana /= integral_thisweight;
+  cout << integral_thisana << endl;
+
+  double difference = integral_thisana/integral_shengli;
+
   TGraphErrors* tge_ppg = new TGraphErrors(13,ppg_pt,ppg_v2,0,ppg_ev2);
   tge_ppg->SetMarkerColor(kBlue);
   tge_ppg->SetMarkerStyle(kFullDiamond);
@@ -139,6 +174,13 @@ void check_v2pT_plot()
 
   c1->Print("Figures/v2pt_rfkomp_heau200.png");
   c1->Print("Figures/v2pt_rfkomp_heau200.pdf");
+
+  th1d_v2pt->Fit("pol0","","",0,3);
+
+  c1->Print("Figures/v2pt_frfkomp_heau200.png");
+  c1->Print("Figures/v2pt_frfkomp_heau200.pdf");
+
+  cout << difference << endl;
 
 }
 
